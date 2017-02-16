@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <group
+
+        android:title="Home items">  <!--  android:checkableBehavior="single"   -->
+
+        <item
+            android:id="@+id/nav_blog"
+            android:checkable="true"
+            android:icon="@drawable/ic_account_balance_black_24dp"
+            android:title="博客地址" />
+
+        <item
+            android:id="@+id/nav_ver"
+            android:checkable="true"
+            android:icon="@drawable/ic_dashboard_black_36dp"
+            android:title="版本信息" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:checkable="true"
+            android:icon="@drawable/ic_dashboard_black_36dp"
+            android:title="关于我" />
+
+    </group>
+
+    <item android:title="Sub items">
+
+        <menu>
+
+            <item
+                android:id="@+id/sub_switch"
+                android:checkable="true"
+                android:icon="@drawable/ic_settings_applications_black_36dp"
+                android:title="切换主题" />
+
+            <item
+                android:id="@+id/sub_exit"
+                android:checkable="true"
+                android:icon="@drawable/ic_exit_to_app_black_36dp"
+                android:title="退出应用" />
+        </menu>
+    </item>
+</menu>

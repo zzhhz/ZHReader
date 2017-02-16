@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion '25.0.1'
+
+    defaultConfig {
+        applicationId "com.zzh.reader"
+        minSdkVersion 14
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    signingConfigs {
+        //正式版签名
+        releaseConfigs {
+            storeFile file("zzh.jks")
+            storePassword "zzheng4419"
+            keyAlias "zzh"
+            keyPassword "zzheng4419"
+        }
+    }
+    buildTypes {
+        release {
+            versionNameSuffix ""
+            //混淆
+            minifyEnabled false
+            //Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources false
+            //前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfigs
+        }
+        debug {
+            versionNameSuffix ""
+            minifyEnabled false
+            zipAlignEnabled true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfigs
+        }
+    }
+    greendao {
+        schemaVersion 1
+        daoPackage 'com.zzh.reader.dao'
+        targetGenDir 'src/main/java'
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    // compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+    compile project(':LibExt')
+}

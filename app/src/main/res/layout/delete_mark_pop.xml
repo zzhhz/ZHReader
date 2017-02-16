@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/black"
+    android:showDividers="middle"
+    android:divider="?android:attr/dividerHorizontal">
+
+    <TextView
+        android:id="@+id/delete_mark_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:textSize="18sp"
+        android:text="删除书签"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal|center_vertical"/>
+    <TextView
+        android:id="@+id/delte_allmark_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:textSize="18sp"
+        android:text="清空书签"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal|center_vertical"/>
+
+</LinearLayout>
