@@ -18,9 +18,32 @@ import android.widget.TextView;
 import com.astuetz.PagerSlidingTabStrip;
 import com.zzh.reader.R;
 import com.zzh.reader.adapter.MyPagerAdapter;
-
 /**
- * Created by Administrator on 2016/1/6.
+ *
+ *----------Dragon be here!----------/
+ * 　　　┏┓　　　┏┓
+ * 　　┏┛┻━━━┛┻┓
+ * 　　┃　　　　　　　┃
+ * 　　┃　　　━　　　┃
+ * 　　┃　┳┛　┗┳　┃
+ * 　　┃　　　　　　　┃
+ * 　　┃　　　┻　　　┃
+ * 　　┃　　　　　　　┃
+ * 　　┗━┓　　　┏━┛
+ * 　　　　┃　　　┃神兽保佑
+ * 　　　　┃　　　┃代码无BUG！
+ * 　　　　┃　　　┗━━━┓
+ * 　　　　┃　　　　　　　┣┓
+ * 　　　　┃　　　　　　　┏┛
+ * 　　　　┗┓┓┏━┳┓┏┛
+ * 　　　　　┃┫┫　┃┫┫
+ * 　　　　　┗┻┛　┗┻┛
+ * ━━━━━━神兽出没━永无BUG━━━━━
+ * @Date: 2017/2/17 15:04
+ * @Email: zzh_hz@126.com
+ * @QQ: 1299234582
+ * @Author: zzh
+ * @Description: 书签页面
  */
 public class MarkActivity extends FragmentActivity implements View.OnClickListener {
 
@@ -28,16 +51,16 @@ public class MarkActivity extends FragmentActivity implements View.OnClickListen
     private DisplayMetrics dm;
     private ImageButton button_back;
     private TextView title;
-    private static String bookpath_intent,bookname_intent;
+    private static String bookpath_intent, bookname_intent;
     private Typeface typeface;
 
     @Override
-        protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.markactivity);
         dm = getResources().getDisplayMetrics();
-        typeface = Typeface.createFromAsset(this.getAssets(),"font/QH.ttf");
+        typeface = Typeface.createFromAsset(this.getAssets(), "font/QH.ttf");
         button_back = (ImageButton) findViewById(R.id.back);
         title = (TextView) findViewById(R.id.bookname);
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
@@ -68,20 +91,20 @@ public class MarkActivity extends FragmentActivity implements View.OnClickListen
         pagerSlidingTabStrip.setTextSize((int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP, 16, dm));
         //设置Tab标题文字的字体
-        pagerSlidingTabStrip.setTypeface(typeface,0);
+        pagerSlidingTabStrip.setTypeface(typeface, 0);
         // 设置Tab Indicator的颜色
         pagerSlidingTabStrip.setIndicatorColor(Color.parseColor("#45c01a"));
         // 设置选中Tab文字的颜色 (这是我自定义的一个方法)
-    //    pagerSlidingTabStrip.setSelectedTextColor(Color.parseColor("#45c01a"));
+        //    pagerSlidingTabStrip.setSelectedTextColor(Color.parseColor("#45c01a"));
         // 取消点击Tab时的背景色
         pagerSlidingTabStrip.setTabBackground(0);
 
-       // pagerSlidingTabStrip.setDividerPadding(18);
+        // pagerSlidingTabStrip.setDividerPadding(18);
     }
 
 
     @Override
-    public void onClick (View view) {
+    public void onClick(View view) {
         Intent upIntent = NavUtils.getParentActivityIntent(this);
         if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
             TaskStackBuilder.create(this).addNextIntentWithParentStack(upIntent)
@@ -94,7 +117,7 @@ public class MarkActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
-    public static String getBookpath_intent(){
+    public static String getBookpath_intent() {
         return bookpath_intent;
     }
 

@@ -56,5 +56,6 @@
     <color name="black_overlay">#66000000</color>
     <color name="line">#f8525252</color>
     <color name="color_refresh">@android:color/transparent</color>
+    <color name="color_515151">#515151</color>
 
 </resources>

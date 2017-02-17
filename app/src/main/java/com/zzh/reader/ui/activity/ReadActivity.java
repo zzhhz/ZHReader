@@ -19,6 +19,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.transition.Fade;
 import android.transition.Slide;
 import android.util.Log;
@@ -48,7 +54,13 @@ import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.SynthesizerListener;
 import com.zzh.reader.R;
+import com.zzh.reader.adapter.AppBarViewPagerAdapter;
+import com.zzh.reader.base.BaseReaderNoSwipeActivity;
 import com.zzh.reader.database.BookMarks;
+import com.zzh.reader.fragment.BookMarkFragment;
+import com.zzh.reader.fragment.CatalogueFragment;
+import com.zzh.reader.fragment.NotesFragment;
+import com.zzh.reader.model.BookMark;
 import com.zzh.reader.util.BookPageFactory;
 import com.zzh.reader.util.CommonUtil;
 import com.zzh.reader.util.EventUtils;
@@ -57,7 +69,12 @@ import com.zzh.reader.view.PageWidget;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by ZZH on 17/2/9
@@ -68,7 +85,7 @@ import java.util.Date;
  * @Author: zzh
  * @Description: 开始阅读页面。
  */
-public class ReadActivity extends Activity implements OnClickListener,
+public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickListener,
         SeekBar.OnSeekBarChangeListener {
     private LinearLayout layout;
     private static final String TAG = "Read2";
@@ -78,14 +95,14 @@ public class ReadActivity extends Activity implements OnClickListener,
     public static Canvas mCurPageCanvas, mNextPageCanvas;
     private static String word = "";// 记录当前页面的文字
     private int a = 0, b = 0;// 记录toolpop的位置
-    private TextView fontSize, readLight, bookMark, readJump,readSet;
-    private static String bookPath,bookName;// 记录读入书的路径及书名
+    private TextView fontSize, readLight, bookMark, readJump, readSet;
+    private static String bookPath, bookName;// 记录读入书的路径及书名
     private String ccc = null;// 记录是否为快捷方式调用
     protected long count = 1;
     public static SharedPreferences.Editor editor;
-    private ImageButton listener_book,imageBtn_light,pop_return ;
-    private TextView btn_mark_add,btn_mark_my,lightPlus,linghtDecrease;
-    private TextView jumpOk, jumpCancel,fontBig,fontSmall;
+    private ImageButton listener_book, imageBtn_light, pop_return;
+    private TextView btn_mark_add, btn_mark_my, lightPlus, linghtDecrease;
+    private TextView jumpOk, jumpCancel, fontBig, fontSmall;
     private Boolean isNight; // 亮度模式,白天和晚上
     protected int jumpPage;// 记录跳转进度条
     private int light; // 亮度值
@@ -96,10 +113,10 @@ public class ReadActivity extends Activity implements OnClickListener,
     private Context mContext = null;
     private PageWidget mPageWidget;
     private PopupWindow mPopupWindow, mToolpop, mToolpop1, mToolpop2,
-            mToolpop3, mToolpop4, playpop,voicesetpop;
+            mToolpop3, mToolpop4, playpop, voicesetpop;
     private BookPageFactory pagefactory;
     private View popupwindwow, toolpop, toolpop1, toolpop2, toolpop3, toolpop4,
-            playView,voiceSetView;  //加载popupwindow布局
+            playView, voiceSetView;  //加载popupwindow布局
     int screenHeight;
     int readHeight; // 电子书显示高度
     int screenWidth;
@@ -115,7 +132,7 @@ public class ReadActivity extends Activity implements OnClickListener,
     public static String words;
     private boolean isStart;
     private Button button3;
-    private  int scale;
+    private int scale;
     // 语音合成对象
     private SpeechSynthesizer mTts;
     // 默认发音人
@@ -128,27 +145,49 @@ public class ReadActivity extends Activity implements OnClickListener,
     // 播放进度
     private int mPercentForPlaying = 0;
     private String[] mCloudVoicersEntries;
-    private String[] mCloudVoicersValue ;
+    private String[] mCloudVoicersValue;
     private int selectedNum = 0;//选择导入书架的书本数量
     private AudioManager audio;
     private Typeface typeface;
-
+    @BindView(R.id.navigationView)
+    protected NavigationView mNoteView;
+    @BindView(R.id.read_drawer_layout)
+    protected DrawerLayout mDrawerLayout;
+    //
+    protected ViewPager mViewPager;
+    protected AppBarViewPagerAdapter mAdapter;
+    protected TabLayout mTabLayout;
+    protected BookMarkFragment mArkFragment;
+    protected CatalogueFragment mCatalogFragment;
+    protected NotesFragment mNotesFragment;
+    ///
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.readactivity);
+    }
+
+    @Override
+    protected int setLayoutId() {
+        return R.layout.readactivity;
+    }
+
+    @Override
+    protected void initView() {
+        ButterKnife.bind(this);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//保存屏幕常亮
         hideSystemUI();//隐藏
         mContext = getBaseContext();
-        typeface = Typeface.createFromAsset(getApplicationContext().getAssets(),"font/QH.ttf");
-        scale = (int)mContext.getResources().getDisplayMetrics().density;
-
+        typeface = Typeface.createFromAsset(getApplicationContext().getAssets(), "font/QH.ttf");
+        scale = (int) mContext.getResources().getDisplayMetrics().density;
+        mViewPager = (ViewPager) mNoteView.findViewById(R.id.viewPager);
+        mTabLayout = (TabLayout) mNoteView.findViewById(R.id.tabLayout);
         //初始化语音
-        SpeechUtility.createUtility(ReadActivity.this, SpeechConstant.APPID +"=5695a8b4");//创建语音配置对象
-        mTts = SpeechSynthesizer.createSynthesizer(ReadActivity.this,mTtsInitListener);//初始化合成对象
+        SpeechUtility.createUtility(ReadActivity.this, SpeechConstant.APPID + "=5695a8b4");//创建语音配置对象
+        mTts = SpeechSynthesizer.createSynthesizer(ReadActivity.this, mTtsInitListener);//初始化合成对象
         mCloudVoicersEntries = getResources().getStringArray(R.array.voicer_cloud_entries);
         mCloudVoicersValue = getResources().getStringArray(R.array.voicer_cloud_values);
-        mToast = Toast.makeText(this,"",Toast.LENGTH_SHORT);
+        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         isStart = false;
         //获取屏幕宽高
         WindowManager manage = getWindowManager();
@@ -159,10 +198,9 @@ public class ReadActivity extends Activity implements OnClickListener,
         screenHeight = displaysize.y;
         readHeight = screenHeight - screenWidth / 320;
 
-        defaultFontSize = (int) mContext.getResources().getDimension(R.dimen.reading_default_text_size) ;  //text size
+        defaultFontSize = (int) mContext.getResources().getDimension(R.dimen.reading_default_text_size);  //text size
         minFontSize = (int) mContext.getResources().getDimension(R.dimen.reading_min_text_size);
         maxFontSize = (int) mContext.getResources().getDimension(R.dimen.reading_max_text_size);
-
 
         mCurPageBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.RGB_565);      //android:LargeHeap=true  use in  manifest application
         mNextPageBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.RGB_565);
@@ -194,49 +232,97 @@ public class ReadActivity extends Activity implements OnClickListener,
         bookName = intent.getStringExtra("bookname");
         ccc = intent.getStringExtra("ccc");
         begin1 = intent.getIntExtra("bigin", 0);
-        if(begin1 == 0) {
+        if (begin1 == 0) {
             begin = sp.getInt(bookPath + "begin", 0);
-        }else {
+        } else {
             begin = begin1;
         }
         //日间或夜间模式设置
-        pagefactory = new BookPageFactory(screenWidth, readHeight,this);// 书工厂
+        pagefactory = new BookPageFactory(screenWidth, readHeight, this);// 书工厂
         if (isNight) {
             pagefactory.setBgBitmap(BookPageFactory.decodeSampledBitmapFromResource(
                     this.getResources(), R.drawable.main_bg, screenWidth, readHeight));
             pagefactory.setM_textColor(Color.rgb(128, 128, 128));
         } else {
-        //  pagefactory.setBgBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.bg));
-           // pagefactory.setBgBitmap(BookPageFactory.decodeSampledBitmapFromResource(
-                 //   this.getResources(),R.drawable.bg,screenWidth,readHeight));
-            Bitmap bmp = Bitmap.createBitmap(screenWidth,screenHeight, Bitmap.Config.RGB_565);
+            //   this.getResources(),R.drawable.bg,screenWidth,readHeight));
+            Bitmap bmp = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(bmp);
-           // canvas.drawColor(Color.rgb(250, 249, 222));
+            // canvas.drawColor(Color.rgb(250, 249, 222));
             canvas.drawColor(getResources().getColor(R.color.read_background_paperYellow));
             pagefactory.setM_textColor(getResources().getColor(R.color.read_textColor));
             pagefactory.setBgBitmap(bmp);
-         //   pagefactory.setM_textColor(Color.rgb(28, 28, 28));
         }
         // 从指定位置打开书籍，默认从开始打开
         try {
             pagefactory.openbook(bookPath, begin);
             pagefactory.setM_fontSize(fontsize);
             pagefactory.onDraw(mCurPageCanvas);
-            // Log.d("ReadActivity", "sp中的size" + size);
             word = pagefactory.getFirstTwoLineText();// 获取当前阅读位置的前两行文字,用作书签
             editor.putInt(bookPath + "begin", begin).apply();
-           // Log.d("ReadActivity", "第一页首两行文字是" + word);
-
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     pagefactory.getBookInfo();  //获取章节目录
                 }
             }).start();
-        } catch (IOException e1) {
-            Log.e(TAG, "打开电子书失败", e1);
-            Toast.makeText(this, "打开电子书失败", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            showMessage("打开电子书失败");
         }
+    }
+
+    @Override
+    protected void initData() {
+
+        List<Fragment> fragmentList = new ArrayList<>();
+        mArkFragment = new BookMarkFragment();
+        mCatalogFragment = new CatalogueFragment();
+        mNotesFragment = new NotesFragment();
+
+        fragmentList.add(mCatalogFragment);
+        fragmentList.add(mArkFragment);
+        fragmentList.add(mNotesFragment);
+
+        List<String> titles = new ArrayList<>();
+        titles.add("目录");
+        titles.add("书签");
+        titles.add("笔记");
+        mAdapter = new AppBarViewPagerAdapter(getSupportFragmentManager(), mContext, fragmentList,titles);
+
+        mViewPager.setAdapter(mAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+
+        /*
+        int tabCount = mAppBarLayout.getTabCount();
+        for (int i = 0; i < tabCount; i++) {
+            TabLayout.Tab tab = mAppBarLayout.getTabAt(i);
+            if (tab != null) {
+                tab.setCustomView(mAdapter.getTabView(i));
+            }
+            tab.setTag(i + "");
+            //默认初始化第一条显示样式
+            View view = tab.getCustomView();
+            if (i == 0) {
+                view.setBackgroundResource(R.drawable.class_tabbar_select);
+            } else if (i == tabCount - 1) {
+                view.setBackgroundResource(R.drawable.class_tabbar_unselect_full);
+            } else {
+                view.setBackgroundResource(R.drawable.class_tabbar_unselect_wrap);
+            }
+        }
+
+        mAppBarLayout.addOnTabSelectedListener(this);
+        final TabLayout.TabLayoutOnPageChangeListener listener =
+                new TabLayout.TabLayoutOnPageChangeListener(mAppBarLayout);
+        mViewPager.addOnPageChangeListener(listener);
+        mViewPager.setCurrentItem(0);
+
+        */
+
+
+    }
+
+    @Override
+    protected void initSetListener() {
         //mPageWidget onTouch监听  翻页或显示菜单
         mPageWidget.setBitmaps(mCurPageBitmap, mCurPageBitmap);
         mPageWidget.setOnTouchListener(new View.OnTouchListener() {
@@ -246,86 +332,111 @@ public class ReadActivity extends Activity implements OnClickListener,
                 boolean ret = false;
                 if (v == mPageWidget) {
 
-                        if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                            mPageWidget.abortAnimation();
-                            mPageWidget.calcCornerXY(e.getX(), e.getY());
-                            pagefactory.onDraw(mCurPageCanvas);
-                           // Log.d("ReadActivity","action_down");
-                            int x = (int) e.getX();
-                            int y = (int) e.getY();
-                            //Action_Down时在中间位置显示菜单
-                            if (x > screenWidth / 3 && x < screenWidth * 2 / 3 && y > screenHeight / 3 && y < screenHeight * 2 / 3) {
-                                if(!voiceListining && !show) {
-                                        showSystemUI();
-                                        pop();
-                                        show = true;
-                                }else {
-                                    if(!voiceSetShow){
-                                        showSystemUI();
-                                        setVoicesetpop();
-                                        if (mTts.isSpeaking()) {
-                                            mTts.pauseSpeaking();
-                                        }
-                                        voiceSetShow = true;
-                                    }else {
-                                         hideSystemUI();
-                                         voicesetpop.dismiss();
-                                         mTts.resumeSpeaking();
-                                         voiceSetShow = false;
+                    if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                        mPageWidget.abortAnimation();
+                        mPageWidget.calcCornerXY(e.getX(), e.getY());
+                        pagefactory.onDraw(mCurPageCanvas);
+                        int x = (int) e.getX();
+                        int y = (int) e.getY();
+                        //Action_Down时在中间位置显示菜单
+                        if (x > screenWidth / 3 && x < screenWidth * 2 / 3 && y > screenHeight / 3 && y < screenHeight * 2 / 3) {
+                            if (!voiceListining && !show) {
+                                showSystemUI();
+                                pop();
+                                show = true;
+                            } else {
+                                if (!voiceSetShow) {
+                                    showSystemUI();
+                                    setVoicesetpop();
+                                    if (mTts.isSpeaking()) {
+                                        mTts.pauseSpeaking();
                                     }
+                                    voiceSetShow = true;
+                                } else {
+                                    hideSystemUI();
+                                    voicesetpop.dismiss();
+                                    mTts.resumeSpeaking();
+                                    voiceSetShow = false;
                                 }
-                                return false;//停止向下分发事件
                             }
-                            if (x < screenWidth / 2) {// 从左翻
-                                if(voiceListining) {
-                                    return false ;//如果正在语音朗读不翻页，停止向下分发事件
-                                    }
-                                    try {
-                                        pagefactory.prePage();
-                                        begin = pagefactory.getM_mbBufBegin();// 获取当前阅读位置
-                                        word = pagefactory.getFirstTwoLineText();// 获取当前阅读位置的首行文字
-                                    } catch (IOException e1) {
-                                        Log.e(TAG, "onTouch->prePage error", e1);
-                                    }
-                                    if (pagefactory.isfirstPage()) {
-                                        Toast.makeText(mContext, "当前是第一页", Toast.LENGTH_SHORT).show();
-                                        return false;
-                                    }
-                                    pagefactory.onDraw(mNextPageCanvas);
-
-                                } else if (x >= screenWidth / 2) {// 从右翻
-                                    if(voiceListining) {
-                                        return false ;
-                                    }
-                                    try {
-                                        pagefactory.nextPage();
-                                        begin = pagefactory.getM_mbBufBegin();// 获取当前阅读位置
-                                        word = pagefactory.getFirstTwoLineText();// 获取当前阅读位置的首行文字
-                                    } catch (IOException e1) {
-                                        Log.e(TAG, "onTouch->nextPage error", e1);
-                                    }
-                                    if (pagefactory.islastPage()) {
-                                        Toast.makeText(mContext, "已经是最后一页了", Toast.LENGTH_SHORT).show();
-                                        return false;
-                                    }
-                                    pagefactory.onDraw(mNextPageCanvas);
-                                }
-                           mPageWidget.setBitmaps(mCurPageBitmap, mNextPageBitmap);
+                            return false;//停止向下分发事件
                         }
-                        editor.putInt(bookPath + "begin", begin).apply();
-                        ret = mPageWidget.doTouchEvent(e);
-                        return ret;
+                        if (x < screenWidth / 2 && (y > screenHeight * 2 / 3 || y < screenHeight / 3)) {// 从左往右翻
+                            if (voiceListining) {
+                                return false;//如果正在语音朗读不翻页，停止向下分发事件
+                            }
+                            try {
+                                pagefactory.prePage();
+                                begin = pagefactory.getM_mbBufBegin();// 获取当前阅读位置
+                                word = pagefactory.getFirstTwoLineText();// 获取当前阅读位置的首行文字
+                            } catch (IOException e1) {
+                                Log.e(TAG, "onTouch->prePage error", e1);
+                            }
+                            if (pagefactory.isfirstPage()) {
+                                Toast.makeText(mContext, "当前是第一页", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
+                            pagefactory.onDraw(mNextPageCanvas);
+
+                        } else if (x >= screenWidth / 3) {// 从右往左翻
+                            if (voiceListining) {
+                                return false;
+                            }
+                            try {
+                                pagefactory.nextPage();
+                                begin = pagefactory.getM_mbBufBegin();// 获取当前阅读位置
+                                word = pagefactory.getFirstTwoLineText();// 获取当前阅读位置的首行文字
+                            } catch (IOException e1) {
+                                Log.e(TAG, "onTouch->nextPage error", e1);
+                            }
+                            if (pagefactory.islastPage()) {
+                                Toast.makeText(mContext, "已经是最后一页了", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
+                            pagefactory.onDraw(mNextPageCanvas);
+                        }
+                        mPageWidget.setBitmaps(mCurPageBitmap, mNextPageBitmap);
+                    }
+                    editor.putInt(bookPath + "begin", begin).apply();
+                    ret = mPageWidget.doTouchEvent(e);
+                    return ret;
                 }
-                return false;
+                return true;
             }
         });
+
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void handlerMessage(Message message) {
+
     }
 
     /**
      * 记录数据 并清空popupwindow
      */
     private void clear() {
-
         show = false;
         mPopupWindow.dismiss();
         popDismiss();
@@ -365,22 +476,21 @@ public class ReadActivity extends Activity implements OnClickListener,
         return sp.getInt("light", 3);
     }
 
-   /**
-   * 设置夜间还是白天阅读模式
-   *
-   * */
-     private void setDayOrNight () {
-         try {
-             if (isNight) {
-                 editor.putBoolean("night", true);
-             } else {
-                 editor.putBoolean("night", false);
-             }
-             editor.apply();
-         }catch (Exception e) {
-             Log.e(TAG, "setDayOrNight-> Exception error", e);
-         }
-     }
+    /**
+     * 设置夜间还是白天阅读模式
+     */
+    private void setDayOrNight() {
+        try {
+            if (isNight) {
+                editor.putBoolean("night", true);
+            } else {
+                editor.putBoolean("night", false);
+            }
+            editor.apply();
+        } catch (Exception e) {
+            Log.e(TAG, "setDayOrNight-> Exception error", e);
+        }
+    }
 
     /**
      * 获取夜间还是白天阅读模式
@@ -393,11 +503,12 @@ public class ReadActivity extends Activity implements OnClickListener,
      * 读取配置文件中字体大小
      */
     private int getSize() {
-      return sp.getInt("size", defaultFontSize);
+        return sp.getInt("size", defaultFontSize);
     }
 
     /**
      * 点击监听的处理
+     *
      * @param v
      */
     @Override
@@ -416,7 +527,11 @@ public class ReadActivity extends Activity implements OnClickListener,
             // 书签按钮
             case R.id.bookBtn_mark:
                 a = 3;
-                setToolPop(a);
+                //setToolPop(a);
+                // 解决关闭的时候，mDrawerLayout禁止手势滑动出现
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+                mDrawerLayout.openDrawer(mNoteView);
                 break;
             // 跳转按钮
             case R.id.bookBtn_jump:
@@ -426,22 +541,22 @@ public class ReadActivity extends Activity implements OnClickListener,
                 break;
             case R.id.readSet:
                 a = 5;
-             //   setToolPop(a);
+                //   setToolPop(a);
                 break;
             // 夜间模式按钮
             case R.id.imageBtn_light:
                 if (isNight) {
                     isNight = false;
                     layout.setBackgroundResource(R.drawable.tmall_bar_bg);
-                  //  pagefactory.setM_textColor(Color.rgb(28, 28, 28));
+                    //  pagefactory.setM_textColor(Color.rgb(28, 28, 28));
                     pagefactory.setM_textColor(Color.rgb(50, 65, 78));
                     imageBtn_light.setImageResource(R.drawable.menu_daynight_icon);
 
-                  // pagefactory.setBgBitmap(BitmapFactory.decodeResource(
-                   //         this.getResources(), R.drawable.bg));
-                    Bitmap bmp=Bitmap.createBitmap(screenWidth,screenHeight, Bitmap.Config.RGB_565);
-                    Canvas canvas=new Canvas(bmp);
-                    canvas.drawColor(Color.rgb(250,249,222));
+                    // pagefactory.setBgBitmap(BitmapFactory.decodeResource(
+                    //         this.getResources(), R.drawable.bg));
+                    Bitmap bmp = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.RGB_565);
+                    Canvas canvas = new Canvas(bmp);
+                    canvas.drawColor(Color.rgb(250, 249, 222));
                     pagefactory.setBgBitmap(bmp);
                 } else {
                     isNight = true;
@@ -458,7 +573,7 @@ public class ReadActivity extends Activity implements OnClickListener,
                 break;
             // 添加书签按钮
             case R.id.Btn_mark_add:
-              //  SQLiteDatabase db = markhelper.getWritableDatabase();
+                //  SQLiteDatabase db = markhelper.getWritableDatabase();
                 word = word.trim();
                 while (word.startsWith("　")) {
                     word = word.substring(1, word.length()).trim();
@@ -484,9 +599,9 @@ public class ReadActivity extends Activity implements OnClickListener,
                 mToolpop3.dismiss();
                 break;
             // 我的书签按钮
-           case R.id.Btn_mark_my:
+            case R.id.Btn_mark_my:
                 Intent intent = new Intent();
-                intent.setClass(ReadActivity.this,MarkActivity.class);
+                intent.setClass(ReadActivity.this, MarkActivity.class);
                 intent.putExtra("bookpath", bookPath);
                 intent.putExtra("bookname", bookName);
                 startActivity(intent);
@@ -534,17 +649,17 @@ public class ReadActivity extends Activity implements OnClickListener,
                 // 设置参数
                 setParam();
                 //Log.d("ReadActivity", "tts是否执行到这里");
-                int code =  mTts.startSpeaking(words, mTtsListener);
+                int code = mTts.startSpeaking(words, mTtsListener);
 
                 if (code != ErrorCode.SUCCESS) {
-                    if(code == ErrorCode.ERROR_COMPONENT_NOT_INSTALLED){
+                    if (code == ErrorCode.ERROR_COMPONENT_NOT_INSTALLED) {
                         //未安装则跳转到提示安装页面
                         //  mInstaller.install();
-                    }else {
+                    } else {
                         showTip("语音合成失败,错误码: " + code);
                     }
                 }
-              //  voiceListining = true;
+                //  voiceListining = true;
                 hideSystemUI();
                 mPopupWindow.dismiss();
                 popDismiss();
@@ -567,14 +682,12 @@ public class ReadActivity extends Activity implements OnClickListener,
                     mPopupWindow.dismiss();
                     popDismiss();
                 }
-
                 KeyEvent newEvent = new KeyEvent(KeyEvent.ACTION_DOWN,
                         KeyEvent.KEYCODE_BACK);
                 onKeyDown(KeyEvent.KEYCODE_BACK, newEvent);
                 break;
             //退出语音朗读
             case R.id.play_quit:
-
                 mTts.stopSpeaking();
                 mTts.destroy();
                 hideSystemUI();
@@ -587,6 +700,7 @@ public class ReadActivity extends Activity implements OnClickListener,
 
     /**
      * 判断是从哪个界面进入的READ
+     *
      * @param keyCode
      * @param event
      * @return
@@ -594,51 +708,52 @@ public class ReadActivity extends Activity implements OnClickListener,
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
-           case KeyEvent.KEYCODE_BACK :
+            case KeyEvent.KEYCODE_BACK:
 
-               if (!mPopupWindow.isShowing()) {
-                   hideSystemUI();
-               } else {
-                   // showSystemUI();
-               }
-               voiceListining = false;
-               if (voicesetpop.isShowing()) {
-                   voicesetpop.dismiss();
-               }
-               if (show) {// 如果popwindow正在显示
-                   getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-                   show = false;
-                   mPopupWindow.dismiss();
-                   popDismiss();
-               } else {
-                   ReadActivity.this.finish();
-                   EventUtils.sendEventCloseBook();
-               }
+                if (!mPopupWindow.isShowing()) {
+                    hideSystemUI();
+                } else {
+                    // showSystemUI();
+                }
+                voiceListining = false;
+                if (voicesetpop.isShowing()) {
+                    voicesetpop.dismiss();
+                }
+                if (show) {// 如果popwindow正在显示
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+                    show = false;
+                    mPopupWindow.dismiss();
+                    popDismiss();
+                } else {
+                    ReadActivity.this.finish();
+                    EventUtils.sendEventCloseBook();
+                }
 
-            return true;
-           //音量加大及减小事件
-           case KeyEvent.KEYCODE_VOLUME_UP:
-               if(!voiceListining && !show) {
-                   prePage();
-               }else
-               audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE,
-                       AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
-               return true;
-           case KeyEvent.KEYCODE_VOLUME_DOWN:
-               if(!voiceListining && !show) {
-                   nextPage();
-               }else
-               audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER,
-                       AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
-               return true;
-           default:
-               break;
+                return true;
+            //音量加大及减小事件
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (!voiceListining && !show) {
+                    prePage();
+                } else
+                    audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE,
+                            AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (!voiceListining && !show) {
+                    nextPage();
+                } else
+                    audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER,
+                            AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
+                return true;
+            default:
+                break;
         }
-        return super.onKeyDown(keyCode,event);
+        return super.onKeyDown(keyCode, event);
     }
 
     /**
      * 添加对menu按钮的监听
+     *
      * @param keyCode
      * @param event
      * @return
@@ -660,6 +775,7 @@ public class ReadActivity extends Activity implements OnClickListener,
 
     /**
      * 各种进度条变化设置
+     *
      * @param seekBar
      * @param progress
      * @param fromUser
@@ -777,7 +893,6 @@ public class ReadActivity extends Activity implements OnClickListener,
     }
 
 
-
     /**
      * 初始化所有POPUPWINDOW
      */
@@ -786,7 +901,7 @@ public class ReadActivity extends Activity implements OnClickListener,
         toolpop = this.getLayoutInflater().inflate(R.layout.toolpop, null);
         mPopupWindow = new PopupWindow(popupwindwow, LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
-      //  mPopupWindow.setAnimationStyle(R.style.popwin_anim_style);
+        //  mPopupWindow.setAnimationStyle(R.style.popwin_anim_style);
         mToolpop = new PopupWindow(toolpop, LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
         toolpop1 = this.getLayoutInflater().inflate(R.layout.tool_size, null);
@@ -807,25 +922,25 @@ public class ReadActivity extends Activity implements OnClickListener,
 
     }
 
-   /**
-    * 初始化语音朗读菜单popupwindow
-    */
-    private void initVoiceSetPop(){
-        voiceSetView = this.getLayoutInflater().inflate(R.layout.voicesetmenu,null);
-        voicesetpop = new PopupWindow(voiceSetView,LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+    /**
+     * 初始化语音朗读菜单popupwindow
+     */
+    private void initVoiceSetPop() {
+        voiceSetView = this.getLayoutInflater().inflate(R.layout.voicesetmenu, null);
+        voicesetpop = new PopupWindow(voiceSetView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     }
-   /**
-    * 设置语音朗读菜单的显示
-    *
-    */
-    private void setVoicesetpop(){
-        voicesetpop.showAtLocation(mPageWidget,Gravity.BOTTOM,0,0);
-        TextView play_pause = (TextView)voiceSetView.findViewById(R.id.play_pause);
-        TextView voice_people = (TextView)voiceSetView.findViewById(R.id.play_setting_people);
-        ImageButton icon_quit = (ImageButton)voiceSetView.findViewById(R.id.IB_quit);
-        TextView play_quit = (TextView)voiceSetView.findViewById(R.id.play_quit);
-      //  play_pause.setOnClickListener(this);
-      //  pay_continute.setOnClickListener(this);
+
+    /**
+     * 设置语音朗读菜单的显示
+     */
+    private void setVoicesetpop() {
+        voicesetpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 0);
+        TextView play_pause = (TextView) voiceSetView.findViewById(R.id.play_pause);
+        TextView voice_people = (TextView) voiceSetView.findViewById(R.id.play_setting_people);
+        ImageButton icon_quit = (ImageButton) voiceSetView.findViewById(R.id.IB_quit);
+        TextView play_quit = (TextView) voiceSetView.findViewById(R.id.play_quit);
+        //  play_pause.setOnClickListener(this);
+        //  pay_continute.setOnClickListener(this);
         voice_people.setOnClickListener(this);
         play_quit.setOnClickListener(this);
     }
@@ -836,7 +951,6 @@ public class ReadActivity extends Activity implements OnClickListener,
      * @param a
      */
     public void setToolPop(int a) {
-        Log.i("hck", "setToolPop: " + "b:" + b + "  a:" + a);
         if (a == b && a != 0) {
             if (mToolpop.isShowing()) {
                 popDismiss();
@@ -846,18 +960,18 @@ public class ReadActivity extends Activity implements OnClickListener,
                 // 当点击字体按钮
                 if (a == 1) {
                     mToolpop1.setBackgroundDrawable(new ColorDrawable(0xb0000000));//设置背景为半透明色
-                    if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                        int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
+                    if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                        int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
                         mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
-                    }else
-                        mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70*scale);
+                    } else
+                        mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                     seekBar1 = (SeekBar) toolpop1.findViewById(R.id.seekBar_size);
                     fontBig = (TextView) toolpop1.findViewById(R.id.size_plus);
                     fontSmall = (TextView) toolpop1.findViewById(R.id.size_decrease);
                     fontBig.setTypeface(typeface);
                     fontSmall.setTypeface(typeface);
                     fontsize = sp.getInt("size", defaultFontSize);
-                    seekBar1.setProgress((fontsize-minFontSize));
+                    seekBar1.setProgress((fontsize - minFontSize));
                     seekBar1.setOnSeekBarChangeListener(this);
                     fontBig.setOnClickListener(this);
                     fontSmall.setOnClickListener(this);
@@ -866,11 +980,11 @@ public class ReadActivity extends Activity implements OnClickListener,
                 // 当点击亮度按钮
                 if (a == 2) {
                     mToolpop2.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-                    if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                        int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
+                    if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                        int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
                         mToolpop2.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
-                    }else
-                        mToolpop2.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70*scale);
+                    } else
+                        mToolpop2.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                     seekBar2 = (SeekBar) toolpop2.findViewById(R.id.seekBar_light);
                     lightPlus = (TextView) toolpop2.findViewById(R.id.light_plus);
                     linghtDecrease = (TextView) toolpop2.findViewById(R.id.light_decrease);
@@ -883,11 +997,11 @@ public class ReadActivity extends Activity implements OnClickListener,
                 // 当点击书签按钮
                 if (a == 3) {
                     mToolpop3.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-                    if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                        int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
+                    if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                        int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
                         mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
-                    }else
-                        mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70*scale);
+                    } else
+                        mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                     btn_mark_add = (TextView) toolpop3.findViewById(R.id.Btn_mark_add);
                     btn_mark_my = (TextView) toolpop3.findViewById(R.id.Btn_mark_my);
                     btn_mark_add.setTypeface(typeface);
@@ -897,14 +1011,14 @@ public class ReadActivity extends Activity implements OnClickListener,
                 }
                 // 当点击跳转按钮
                 if (a == 4) {
-                   mToolpop4.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-                    if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                        int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
+                    mToolpop4.setBackgroundDrawable(new ColorDrawable(0xb0000000));
+                    if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                        int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
                         mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
-                    }else
-                        mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70*scale);
+                    } else
+                        mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                     int bc = CommonUtil.getBottomStatusHeight(mContext);
-                   // Log.d("ReadActivity","虚拟功能键栏高度是"+bc);
+                    // Log.d("ReadActivity","虚拟功能键栏高度是"+bc);
                     mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 500);
                     jumpOk = (TextView) toolpop4.findViewById(R.id.jump_ok);
                     jumpCancel = (TextView) toolpop4.findViewById(R.id.jump_cancel);
@@ -923,21 +1037,21 @@ public class ReadActivity extends Activity implements OnClickListener,
                     jumpOk.setOnClickListener(this);
                     jumpCancel.setOnClickListener(this);
                 }
-                    if (a == 5) {
+                if (a == 5) {
                     playpop.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-                        if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                            int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
-                            playpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0,popofset);
-                        }else
-                            playpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0,70*scale);
-					Button button = (Button) playView.findViewById(R.id.play_set);
-					button3 = (Button) playView.findViewById(R.id.play_voice);
-                    Button tts_people_select = (Button)playView.findViewById(R.id.play_setting);
-                    Button tts_resume = (Button)playView.findViewById(R.id.play_continute);
+                    if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                        int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
+                        playpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
+                    } else
+                        playpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
+                    Button button = (Button) playView.findViewById(R.id.play_set);
+                    button3 = (Button) playView.findViewById(R.id.play_voice);
+                    Button tts_people_select = (Button) playView.findViewById(R.id.play_setting);
+                    Button tts_resume = (Button) playView.findViewById(R.id.play_continute);
                     tts_people_select.setOnClickListener(this);
                     tts_resume.setOnClickListener(this);
-					button.setOnClickListener(this);
-					button3.setOnClickListener(this);
+                    button.setOnClickListener(this);
+                    button3.setOnClickListener(this);
                 }
 
             }
@@ -951,11 +1065,11 @@ public class ReadActivity extends Activity implements OnClickListener,
             // 点击字体按钮
             if (a == 1) {
                 mToolpop1.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-                if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                    int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
-                    mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0,popofset);
-                }else
-                    mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0,70*scale);
+                if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                    int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
+                    mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
+                } else
+                    mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                 seekBar1 = (SeekBar) toolpop1.findViewById(R.id.seekBar_size);
                 fontBig = (TextView) toolpop1.findViewById(R.id.size_plus);
                 fontSmall = (TextView) toolpop1.findViewById(R.id.size_decrease);
@@ -970,11 +1084,11 @@ public class ReadActivity extends Activity implements OnClickListener,
             // 点击亮度按钮
             if (a == 2) {
                 mToolpop2.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-                if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                    int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
+                if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                    int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
                     mToolpop2.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
-                }else
-                    mToolpop2.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70*scale);
+                } else
+                    mToolpop2.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                 seekBar2 = (SeekBar) toolpop2.findViewById(R.id.seekBar_light);
                 lightPlus = (TextView) toolpop2.findViewById(R.id.light_plus);
                 linghtDecrease = (TextView) toolpop2.findViewById(R.id.light_decrease);
@@ -987,11 +1101,11 @@ public class ReadActivity extends Activity implements OnClickListener,
             // 点击书签按钮
             if (a == 3) {
                 mToolpop3.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-                if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                    int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
+                if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                    int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
                     mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
-                }else
-                    mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70*scale);
+                } else
+                    mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                 btn_mark_add = (TextView) toolpop3.findViewById(R.id.Btn_mark_add);
                 btn_mark_my = (TextView) toolpop3.findViewById(R.id.Btn_mark_my);
                 btn_mark_add.setTypeface(typeface);
@@ -1002,11 +1116,11 @@ public class ReadActivity extends Activity implements OnClickListener,
             // 点击跳转按钮
             if (a == 4) {
                 mToolpop4.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-                if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                    int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
+                if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                    int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
                     mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
-                }else
-                    mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 50*scale);
+                } else
+                    mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 50 * scale);
                 int bc = CommonUtil.getBottomStatusHeight(mContext);
                 jumpOk = (TextView) toolpop4.findViewById(R.id.jump_ok);
                 jumpCancel = (TextView) toolpop4.findViewById(R.id.jump_cancel);
@@ -1027,16 +1141,16 @@ public class ReadActivity extends Activity implements OnClickListener,
             if (a == 5) {
                 playpop.setBackgroundDrawable(new ColorDrawable(0xb0000000));
                 //根据是否有虚拟按键来设置显示位置
-                if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
-                    int popofset = 70*scale+CommonUtil.getBottomStatusHeight(mContext);
-                    playpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0,popofset);
-                }else {
+                if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                    int popofset = 70 * scale + CommonUtil.getBottomStatusHeight(mContext);
+                    playpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
+                } else {
                     playpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                 }
                 Button button = (Button) playView.findViewById(R.id.play_set);
                 button3 = (Button) playView.findViewById(R.id.play_voice);
-                Button tts_people_select = (Button)playView.findViewById(R.id.play_setting);
-                Button tts_resume = (Button)playView.findViewById(R.id.play_continute);
+                Button tts_people_select = (Button) playView.findViewById(R.id.play_setting);
+                Button tts_resume = (Button) playView.findViewById(R.id.play_continute);
                 tts_people_select.setOnClickListener(this);
                 tts_resume.setOnClickListener(this);
                 button.setOnClickListener(this);
@@ -1067,20 +1181,21 @@ public class ReadActivity extends Activity implements OnClickListener,
         mPageWidget.postInvalidate();
 
     }
+
     /**
-    *  合成参数设置
-    */
-    private void setParam(){
+     * 合成参数设置
+     */
+    private void setParam() {
 
         mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
         // 设置在线合成发音人
         mTts.setParameter(SpeechConstant.VOICE_NAME, voicer);
         //设置合成语速
-        mTts.setParameter(SpeechConstant.SPEED,  "60");
+        mTts.setParameter(SpeechConstant.SPEED, "60");
         //设置合成音调
-        mTts.setParameter(SpeechConstant.PITCH,  "50");
+        mTts.setParameter(SpeechConstant.PITCH, "50");
         //设置合成音量
-        mTts.setParameter(SpeechConstant.VOLUME,  "50");
+        mTts.setParameter(SpeechConstant.VOLUME, "50");
 
         // 设置播放合成音频打断音乐播放，默认为true
         mTts.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, "true");
@@ -1118,16 +1233,16 @@ public class ReadActivity extends Activity implements OnClickListener,
                                      String info) {
             // 合成进度
             mPercentForBuffering = percent;
-          //  showTip(String.format(getString(R.string.tts_toast_format),
-                 //   mPercentForBuffering, mPercentForPlaying));
+            //  showTip(String.format(getString(R.string.tts_toast_format),
+            //   mPercentForBuffering, mPercentForPlaying));
         }
 
         @Override
         public void onSpeakProgress(int percent, int beginPos, int endPos) {
             // 播放进度
             mPercentForPlaying = percent;
-          //  showTip(String.format(getString(R.string.tts_toast_format),
-                 //   mPercentForBuffering, mPercentForPlaying));
+            //  showTip(String.format(getString(R.string.tts_toast_format),
+            //   mPercentForBuffering, mPercentForPlaying));
             if (mPercentForPlaying == 100) {
                 nextPage();
                 mTts.startSpeaking(words, mTtsListener);//当前页面结束开始下一阅读页面的语音播放
@@ -1139,7 +1254,7 @@ public class ReadActivity extends Activity implements OnClickListener,
             if (error == null) {
                 nextPage();
                 mTts.startSpeaking(words, mTtsListener);//当前页面结束开始下一阅读页面的语音播放
-              //  showTip("播放完成");
+                //  showTip("播放完成");
             } else if (error != null) {
                 showTip(error.getPlainDescription(true));
             }
@@ -1164,7 +1279,7 @@ public class ReadActivity extends Activity implements OnClickListener,
         public void onInit(int code) {
             Log.d(TAG, "InitListener init() code = " + code);
             if (code != ErrorCode.SUCCESS) {
-                showTip("初始化失败,错误码："+code);
+                showTip("初始化失败,错误码：" + code);
             } else {
                 // 初始化成功，之后可以调用startSpeaking方法
                 // 注：有的开发者在onCreate方法中创建完合成对象之后马上就调用startSpeaking进行合成，
@@ -1186,8 +1301,7 @@ public class ReadActivity extends Activity implements OnClickListener,
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         //  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        );
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     private void showSystemUI() {
@@ -1208,7 +1322,7 @@ public class ReadActivity extends Activity implements OnClickListener,
     }
 
     public static Bitmap getmCurPageBitmap() {
-        return  mCurPageBitmap;
+        return mCurPageBitmap;
     }
 
 
@@ -1219,9 +1333,9 @@ public class ReadActivity extends Activity implements OnClickListener,
     @Override
     protected void onPause() {
         show = false;
-        if(!mPopupWindow.isShowing()){
+        if (!mPopupWindow.isShowing()) {
             hideSystemUI();
-        }else showSystemUI();
+        } else showSystemUI();
         super.onPause();
 
     }
@@ -1229,20 +1343,20 @@ public class ReadActivity extends Activity implements OnClickListener,
     @Override
     protected void onResume() {
         show = false;
-        if(!mPopupWindow.isShowing()){
+        if (!mPopupWindow.isShowing()) {
             hideSystemUI();
-        }else showSystemUI();
+        } else showSystemUI();
         super.onResume();
 
     }
 
     @Override
-    protected  void onStop() {
+    protected void onStop() {
 
         show = false;
-        if(!mPopupWindow.isShowing()){
+        if (!mPopupWindow.isShowing()) {
             hideSystemUI();
-        }else showSystemUI();
+        } else showSystemUI();
 
         super.onStop();
 
@@ -1265,7 +1379,7 @@ public class ReadActivity extends Activity implements OnClickListener,
      */
     public void prePage() {
         mPageWidget.abortAnimation();
-        mPageWidget.calcCornerXY(10, screenHeight-10);//从左翻页
+        mPageWidget.calcCornerXY(10, screenHeight - 10);//从左翻页
         pagefactory.onDraw(mCurPageCanvas);
         try {
             pagefactory.prePage();
@@ -1276,21 +1390,22 @@ public class ReadActivity extends Activity implements OnClickListener,
         }
         if (pagefactory.isfirstPage()) {
             Toast.makeText(mContext, "当前是第一页", Toast.LENGTH_SHORT).show();
-        }else {
+        } else {
             pagefactory.onDraw(mNextPageCanvas);
             mPageWidget.setBitmaps(mCurPageBitmap, mNextPageBitmap);
             editor.putInt(bookPath + "begin", begin).commit();
             MotionEvent e = MotionEvent.obtain(0, 0, MotionEvent.ACTION_MOVE,
-                    20, screenHeight-20, 1);
+                    20, screenHeight - 20, 1);
             mPageWidget.doTouchEvent(e);
         }
     }
-     /**
-      * 翻下一页
-      */
+
+    /**
+     * 翻下一页
+     */
     public void nextPage() {
         mPageWidget.abortAnimation();
-        mPageWidget.calcCornerXY(screenWidth-10, screenHeight-10);//从右翻页
+        mPageWidget.calcCornerXY(screenWidth - 10, screenHeight - 10);//从右翻页
         pagefactory.onDraw(mCurPageCanvas);
         try {
             pagefactory.nextPage();
@@ -1306,29 +1421,31 @@ public class ReadActivity extends Activity implements OnClickListener,
             mPageWidget.setBitmaps(mCurPageBitmap, mNextPageBitmap);
             editor.putInt(bookPath + "begin", begin).commit();
             MotionEvent e = MotionEvent.obtain(0, 0, MotionEvent.ACTION_MOVE,
-                    screenWidth-20, screenHeight-20, 1);
+                    screenWidth - 20, screenHeight - 20, 1);
             mPageWidget.doTouchEvent(e);
         }
-     //   mTts.startSpeaking(words, mTtsListener);//当前页面结束开始下一阅读页面的语音播放
+        //   mTts.startSpeaking(words, mTtsListener);//当前页面结束开始下一阅读页面的语音播放
     }
+
     /**
-    *   设置转换动画  在5.0系统自身已经带有这种效果
-    */
+     * 设置转换动画  在5.0系统自身已经带有这种效果
+     */
     @TargetApi(21)
     private void setupWindowAnimations() {
 
-            Fade fade = new Fade();
-            fade.setDuration(500);
-            getWindow().setEnterTransition(fade);
+        Fade fade = new Fade();
+        fade.setDuration(500);
+        getWindow().setEnterTransition(fade);
 
-            Slide slide = new Slide();
-            slide.setDuration(500);
-            getWindow().setReturnTransition(fade);
+        Slide slide = new Slide();
+        slide.setDuration(500);
+        getWindow().setReturnTransition(fade);
 
     }
 
     /**
      * 获取书本存储路径
+     *
      * @return
      */
     public static String getBookPath() {
