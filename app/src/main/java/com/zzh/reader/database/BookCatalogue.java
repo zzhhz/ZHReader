@@ -2,9 +2,6 @@ package com.zzh.reader.database;
 
 import org.litepal.crud.DataSupport;
 
-/**
- * Created by Lxq on 2016/4/9.
- */
 public class BookCatalogue extends DataSupport {
     private int id;
     private String bookpath;

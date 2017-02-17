@@ -35,7 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * @Email: zzh_hz@126.com
  * @QQ: 1299234582
  * @Author: zzh
- * @Description:
+ * @Description: 没有向右滑动
  */
 
 public abstract class BaseReaderNoSwipeActivity extends BaseNoSwipeBackActivity {

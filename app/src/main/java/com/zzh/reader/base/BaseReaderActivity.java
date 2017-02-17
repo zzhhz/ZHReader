@@ -34,7 +34,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * @Email: zzh_hz@126.com
  * @QQ: 1299234582
  * @Author: zzh
- * @Description:
+ * @Description: 基类，向右滑动退出
  */
 
 public abstract class BaseReaderActivity extends BaseActivity {
