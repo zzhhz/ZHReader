@@ -617,6 +617,8 @@ public class PageView extends View {
 
     public interface OnClickPageWidget{
         boolean onClickCenter(int x, int y, MotionEvent e);
+        boolean onSlide2Left(int x, int y, MotionEvent e);
+        boolean onSlide2Right(int x, int y, MotionEvent e);
     }
 
     private OnClickPageWidget mClickPageWidget;
@@ -632,7 +634,18 @@ public class PageView extends View {
                 int x = (int) event.getX();
                 int y = (int) event.getY();
                 if (x > mScreenWidth/3 && x< mScreenWidth *2 /3 && y>mScreenHeight / 3 && y< mScreenHeight * 2 /3){
-
+                    if (mClickPageWidget != null) {
+                        mClickPageWidget.onClickCenter(x,y, event);
+                    }
+                }
+                if (x< mScreenWidth/2){
+                    if (mClickPageWidget != null){
+                        mClickPageWidget.onSlide2Right(x,y, event);
+                    }
+                } else if (x >= mScreenWidth / 2){
+                    if (mClickPageWidget != null){
+                        mClickPageWidget.onSlide2Left(x,y, event);
+                    }
                 }
                 break;
         }

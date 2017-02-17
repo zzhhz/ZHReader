@@ -48,6 +48,9 @@ android {
         daoPackage 'com.zzh.reader.dao'
         targetGenDir 'src/main/java'
     }
+    lintOptions{
+        abortOnError false
+    }
 }
 
 dependencies {

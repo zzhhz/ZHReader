@@ -17,6 +17,7 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.transition.Slide;
@@ -28,6 +29,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -327,15 +329,15 @@ public class ReadActivity extends Activity implements OnClickListener,
         show = false;
         mPopupWindow.dismiss();
         popDismiss();
+
     }
 
     /**
      * 记录配置文件中字体大小
      */
-    private void setSize(int fontsize) {
+    private void setSize(int fontSize) {
         try {
-          //  fontsize = seekBar1.getProgress() + defaultFontSize;
-            editor.putInt("size", fontsize);
+            editor.putInt("size", fontSize);
             editor.apply();
         } catch (Exception e) {
             Log.e(TAG, "setSize-> Exception error", e);
@@ -1189,7 +1191,11 @@ public class ReadActivity extends Activity implements OnClickListener,
     }
 
     private void showSystemUI() {
-        getWindow().getDecorView().setSystemUiVisibility(
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Color.parseColor("#2F2F2F"));
+        }
+        window.getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
