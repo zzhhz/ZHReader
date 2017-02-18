@@ -253,7 +253,7 @@ public class MainActivity extends BaseReaderNoSwipeActivity implements SelfAdapt
     }
 
     @Override
-    protected void onEventMainThread(Intent intent) {
+    public void onEventMainThread(Intent intent) {
         if (intent == null)
             return;
         String action = intent.getAction();
@@ -268,7 +268,6 @@ public class MainActivity extends BaseReaderNoSwipeActivity implements SelfAdapt
             case Constants.ACTION_CLOSE_BOOK:
                 refreshBookList();
                 break;
-
         }
     }
 

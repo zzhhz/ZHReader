@@ -1,7 +1,6 @@
 package com.zzh.reader.ui.activity;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
@@ -60,7 +59,6 @@ import com.zzh.reader.database.BookMarks;
 import com.zzh.reader.fragment.BookMarkFragment;
 import com.zzh.reader.fragment.CatalogueFragment;
 import com.zzh.reader.fragment.NotesFragment;
-import com.zzh.reader.model.BookMark;
 import com.zzh.reader.util.BookPageFactory;
 import com.zzh.reader.util.CommonUtil;
 import com.zzh.reader.util.EventUtils;
@@ -161,6 +159,8 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
     protected CatalogueFragment mCatalogFragment;
     protected NotesFragment mNotesFragment;
     ///
+    private int index = -1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -274,9 +274,16 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
     protected void initData() {
 
         List<Fragment> fragmentList = new ArrayList<>();
+        Bundle bundle = new Bundle();
+        bundle.putString(CatalogueFragment.ARGUMENT, bookPath);
+        bundle.putString(BookMarkFragment.ARGUMENT, bookPath);
         mArkFragment = new BookMarkFragment();
         mCatalogFragment = new CatalogueFragment();
         mNotesFragment = new NotesFragment();
+
+        mArkFragment.setArguments(bundle);
+        mCatalogFragment.setArguments(bundle);
+        mNotesFragment.setArguments(bundle);
 
         fragmentList.add(mCatalogFragment);
         fragmentList.add(mArkFragment);
@@ -286,37 +293,26 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
         titles.add("目录");
         titles.add("书签");
         titles.add("笔记");
-        mAdapter = new AppBarViewPagerAdapter(getSupportFragmentManager(), mContext, fragmentList,titles);
-
+        mAdapter = new AppBarViewPagerAdapter(getSupportFragmentManager(), mContext, fragmentList, titles);
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
-        /*
-        int tabCount = mAppBarLayout.getTabCount();
+
+        int tabCount = mTabLayout.getTabCount();
         for (int i = 0; i < tabCount; i++) {
-            TabLayout.Tab tab = mAppBarLayout.getTabAt(i);
+            TabLayout.Tab tab = mTabLayout.getTabAt(i);
             if (tab != null) {
                 tab.setCustomView(mAdapter.getTabView(i));
             }
             tab.setTag(i + "");
             //默认初始化第一条显示样式
-            View view = tab.getCustomView();
-            if (i == 0) {
-                view.setBackgroundResource(R.drawable.class_tabbar_select);
-            } else if (i == tabCount - 1) {
-                view.setBackgroundResource(R.drawable.class_tabbar_unselect_full);
-            } else {
-                view.setBackgroundResource(R.drawable.class_tabbar_unselect_wrap);
-            }
         }
 
-        mAppBarLayout.addOnTabSelectedListener(this);
+        //mTabLayout.addOnTabSelectedListener(this);
         final TabLayout.TabLayoutOnPageChangeListener listener =
-                new TabLayout.TabLayoutOnPageChangeListener(mAppBarLayout);
+                new TabLayout.TabLayoutOnPageChangeListener(mTabLayout);
         mViewPager.addOnPageChangeListener(listener);
         mViewPager.setCurrentItem(0);
-
-        */
 
 
     }
@@ -413,7 +409,11 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
 
             @Override
             public void onDrawerOpened(View drawerView) {
-
+                    // 对数据的记录
+                popDismiss();
+                hideSystemUI();
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
+                mViewPager.setCurrentItem(0);
             }
 
             @Override
@@ -423,6 +423,26 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
 
             @Override
             public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (mViewPager.getCurrentItem() == (mAdapter.getCount() -1)) {
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                } else {
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
 
             }
         });
@@ -884,6 +904,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
      * 关闭弹出pop
      */
     public void popDismiss() {
+        mPopupWindow.dismiss();
         mToolpop.dismiss();
         mToolpop1.dismiss();
         mToolpop2.dismiss();
