@@ -32,7 +32,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
@@ -83,7 +82,7 @@ import butterknife.ButterKnife;
  * @Author: zzh
  * @Description: 开始阅读页面。
  */
-public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickListener,
+public class ReadActivity extends BaseReaderNoSwipeActivity implements
         SeekBar.OnSeekBarChangeListener {
     private LinearLayout layout;
     private static final String TAG = "Read2";
@@ -544,15 +543,6 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
                 a = 2;
                 setToolPop(a);
                 break;
-            // 书签按钮
-            case R.id.bookBtn_mark:
-                a = 3;
-                //setToolPop(a);
-                // 解决关闭的时候，mDrawerLayout禁止手势滑动出现
-                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                mDrawerLayout.openDrawer(Gravity.LEFT);
-                mDrawerLayout.openDrawer(mNoteView);
-                break;
             // 跳转按钮
             case R.id.bookBtn_jump:
                 a = 4;
@@ -563,6 +553,20 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
                 a = 5;
                 //   setToolPop(a);
                 break;
+            case R.id.bookBtn_mark:
+                // 解决关闭的时候，mDrawerLayout禁止手势滑动出现
+                a = 3;
+                /*mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+                mDrawerLayout.openDrawer(mNoteView);*/
+                Intent intent = new Intent();
+                intent.setClass(ReadActivity.this, MarkActivity.class);
+                intent.putExtra("bookpath", bookPath);
+                intent.putExtra("bookname", bookName);
+                startActivity(intent);
+                mPopupWindow.dismiss();
+                popDismiss();
+                break;
             // 夜间模式按钮
             case R.id.imageBtn_light:
                 if (isNight) {
@@ -572,8 +576,6 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
                     pagefactory.setM_textColor(Color.rgb(50, 65, 78));
                     imageBtn_light.setImageResource(R.drawable.menu_daynight_icon);
 
-                    // pagefactory.setBgBitmap(BitmapFactory.decodeResource(
-                    //         this.getResources(), R.drawable.bg));
                     Bitmap bmp = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.RGB_565);
                     Canvas canvas = new Canvas(bmp);
                     canvas.drawColor(Color.rgb(250, 249, 222));
@@ -592,6 +594,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
                 postInvalidateUI();
                 break;
             // 添加书签按钮
+            case R.id.ib_add_book_mark:
             case R.id.Btn_mark_add:
                 //  SQLiteDatabase db = markhelper.getWritableDatabase();
                 word = word.trim();
@@ -620,14 +623,6 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
                 break;
             // 我的书签按钮
             case R.id.Btn_mark_my:
-                Intent intent = new Intent();
-                intent.setClass(ReadActivity.this, MarkActivity.class);
-                intent.putExtra("bookpath", bookPath);
-                intent.putExtra("bookname", bookName);
-                startActivity(intent);
-                mPopupWindow.dismiss();
-                popDismiss();
-
                 break;
             //跳转确定按钮
             case R.id.jump_ok:
@@ -898,6 +893,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements OnClickLi
         listener_book.setOnClickListener(this);
         pop_return.setOnClickListener(this);
         imageBtn_light.setOnClickListener(this);
+        popupwindwow.findViewById(R.id.ib_add_book_mark).setOnClickListener(this);
     }
 
     /**

@@ -19,13 +19,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:background="@drawable/return_button"
-
-            />
+            android:background="@drawable/return_button"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="right"
             android:orientation="horizontal">
             <!--    android:gravity　属性是对该view中内容的限定．比如一个button 上面的text. 你可以设置该text 相对于view的靠左，靠右等位置．
@@ -45,9 +43,14 @@ android:layout_gravity是用来设置该view相对与父view 的位置．比如�
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/img_tts"
-
-                />
+                android:background="@drawable/img_tts"/>
+            <ImageButton
+                android:id="@+id/ib_add_book_mark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="10dp"
+                android:background="@mipmap/ic_add_book_mark"/>
 
 
         </LinearLayout>

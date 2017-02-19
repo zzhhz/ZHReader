@@ -2,10 +2,9 @@ package com.zzh.reader.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.os.Message;
 import android.support.v7.appcompat.R.anim;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,19 +13,22 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.zzh.reader.R;
-import com.zzh.reader.ui.activity.ReadActivity;
 import com.zzh.reader.adapter.MarkAdapter;
+import com.zzh.reader.base.BaseReaderFragment;
 import com.zzh.reader.database.BookMarks;
+import com.zzh.reader.ui.activity.ReadActivity;
 
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Administrator on 2016/1/11.
  */
-public class BookMarkFragment extends Fragment implements View.OnClickListener,AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener {
+public class BookMarkFragment extends BaseReaderFragment implements View.OnClickListener,AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener {
     private List<BookMarks> bookMarksList;
     private ListView markListview;
     private static int begin;
@@ -36,24 +38,52 @@ public class BookMarkFragment extends Fragment implements View.OnClickListener,A
     private View delateMarkPopView;
     private int itemPosition;
     public static final String ARGUMENT = "argument";
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_mark,container,false);
+    @Override
+    protected int setLayoutResId() {
+        return R.layout.fragment_mark;
+    }
+
+    @Override
+    protected void initView(View view) {
         markListview = (ListView) view.findViewById(R.id.marklistview);
         initDeleteMarkPop();
-        markListview.setOnItemClickListener(this);
-        markListview.setOnItemLongClickListener(this);
         Bundle bundle = getArguments();
         if (bundle != null) {
             mArgument = bundle.getString(ARGUMENT);
         }
+    }
+
+    @Override
+    protected void initData() {
         bookMarksList = new ArrayList<>();
-        bookMarksList = DataSupport.where("bookpath = ?", mArgument).find(BookMarks.class);
+        //bookMarksList = DataSupport.where("bookpath = ?", mArgument).find(BookMarks.class);
+        Random random= new Random();
+        for (int i=0;i<20;i++)
+        {
+            BookMarks mark = new BookMarks();
+            mark.setBookpath("======");
+            mark.setBegin(random.nextInt(100));
+            mark.setText(i+"--   --fasdf--"+i);
+            mark.setId(i);
+            mark.setTime(new Date().toString());
+            bookMarksList.add(mark);
+        }
         MarkAdapter markAdapter = new MarkAdapter(getActivity(), bookMarksList);
+        Log.d(TAG, "initData: "+markAdapter.getCount());
         markListview.setAdapter(markAdapter);
-        return view;
+        markAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setViewListener() {
+        markListview.setOnItemClickListener(this);
+        markListview.setOnItemLongClickListener(this);
+    }
+
+    @Override
+    protected void handlerMessage(Message message) {
+
     }
 
     @Override
