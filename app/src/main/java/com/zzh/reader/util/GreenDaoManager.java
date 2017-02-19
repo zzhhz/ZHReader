@@ -2,6 +2,7 @@ package com.zzh.reader.util;
 
 import com.zzh.reader.ReaderApplication;
 import com.zzh.reader.dao.BookDao;
+import com.zzh.reader.dao.BookMarkDao;
 import com.zzh.reader.dao.DaoMaster;
 import com.zzh.reader.dao.DaoSession;
 
@@ -86,5 +87,13 @@ public class GreenDaoManager {
     }
     public static BookDao getBookDao(){
         return getInstance().getDaoSession().getBookDao();
+    }
+
+    /**
+     * 生成BookMarkDao的数据库操作类
+     * @return
+     */
+    public static BookMarkDao getBookMarkDao(){
+        return getInstance().getDaoSession().getBookMarkDao();
     }
 }

@@ -9,10 +9,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.zzh.reader.R;
-import com.zzh.reader.database.BookMarks;
+import com.zzh.reader.model.BookMark;
 import com.zzh.reader.util.BookPageFactory;
+import com.zzh.zlibs.utils.ZUtils;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,25 +22,32 @@ import java.util.List;
  */
 public class MarkAdapter extends BaseAdapter {
     private Context mContext;
-    private List<BookMarks> list ;
+    private List<BookMark> dataList;
     private Typeface typeface;
-    public MarkAdapter(Context context, List<BookMarks> list) {
+    public MarkAdapter(Context context, List<BookMark> list) {
          mContext = context;
-         this.list = list;
+         this.dataList = new ArrayList<>();
+        this.dataList.addAll(list);
          typeface = Typeface.createFromAsset(mContext.getAssets(),"font/QH.ttf");
     }
 
     @Override
     public int getCount() {
-        return list.size();
+        return dataList.size();
     }
 
-    public Object getItem(int position) {
-        return list.get(position);
+    public BookMark getItem(int position) {
+        return dataList.get(position);
     }
+
+    public void addAll(List<BookMark> list){
+        dataList.addAll(list);
+    }
+
+
 
     public long getItemId(int position) {
-        return position;
+        return dataList.get(position).getBookMarkId();
     }
 
     @Override
@@ -59,15 +68,32 @@ public class MarkAdapter extends BaseAdapter {
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.text_mark.setText(list.get(position).getText());
-        long begin = list.get(position).getBegin();
+        BookMark bookMark = dataList.get(position);
+        viewHolder.text_mark.setText(bookMark.getBookMark());
+        long begin = bookMark.getBegin();
         float fPercent = (float) (begin * 1.0 / BookPageFactory
                 .getM_mbBufLen());
         DecimalFormat df = new DecimalFormat("#0");
         String strPercent = df.format(fPercent * 100) + "%";
         viewHolder.progress1.setText(strPercent);
-        viewHolder.mark_time.setText(list.get(position).getTime().substring(0, 16));
+        viewHolder.mark_time.setText(ZUtils.formatDateTime(bookMark.getTime()));
         return convertView;
+    }
+
+    /**
+     * 删除指定书签
+     * @param itemPosition
+     */
+    public void remove(int itemPosition) {
+        dataList.remove(itemPosition);
+    }
+
+    /**
+     * 清空数据
+     */
+    public void clear()
+    {
+        dataList.clear();
     }
 
     class ViewHolder {

@@ -54,20 +54,19 @@ import com.iflytek.cloud.SynthesizerListener;
 import com.zzh.reader.R;
 import com.zzh.reader.adapter.AppBarViewPagerAdapter;
 import com.zzh.reader.base.BaseReaderNoSwipeActivity;
-import com.zzh.reader.database.BookMarks;
 import com.zzh.reader.fragment.BookMarkFragment;
 import com.zzh.reader.fragment.CatalogueFragment;
 import com.zzh.reader.fragment.NotesFragment;
+import com.zzh.reader.model.BookMark;
 import com.zzh.reader.util.BookPageFactory;
 import com.zzh.reader.util.CommonUtil;
 import com.zzh.reader.util.EventUtils;
+import com.zzh.reader.util.GreenDaoManager;
 import com.zzh.reader.view.PageWidget;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -556,14 +555,9 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
             case R.id.bookBtn_mark:
                 // 解决关闭的时候，mDrawerLayout禁止手势滑动出现
                 a = 3;
-                /*mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 mDrawerLayout.openDrawer(Gravity.LEFT);
-                mDrawerLayout.openDrawer(mNoteView);*/
-                Intent intent = new Intent();
-                intent.setClass(ReadActivity.this, MarkActivity.class);
-                intent.putExtra("bookpath", bookPath);
-                intent.putExtra("bookname", bookName);
-                startActivity(intent);
+                mDrawerLayout.openDrawer(mNoteView);
                 mPopupWindow.dismiss();
                 popDismiss();
                 break;
@@ -596,30 +590,24 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
             // 添加书签按钮
             case R.id.ib_add_book_mark:
             case R.id.Btn_mark_add:
-                //  SQLiteDatabase db = markhelper.getWritableDatabase();
                 word = word.trim();
                 while (word.startsWith("　")) {
                     word = word.substring(1, word.length()).trim();
                 }
-                BookMarks bookMarks = new BookMarks();
                 try {
-                    SimpleDateFormat sf = new SimpleDateFormat(
-                            "yyyy-MM-dd HH:mm ss");
-                    String time = sf.format(new Date());
-                    bookMarks.setTime(time);
-                    bookMarks.setBegin(begin);
-                    bookMarks.setText(word);
-                    bookMarks.setBookpath(bookPath);
-                    bookMarks.save();
-
-                    Toast.makeText(ReadActivity.this, "书签添加成功", Toast.LENGTH_SHORT).show();
+                    BookMark bookMark = new BookMark();
+                    bookMark.setBookMarkId(null);
+                    bookMark.setBegin(begin);
+                    bookMark.setBookPath(bookPath);
+                    bookMark.setBookMark(word);
+                    bookMark.setTime(System.currentTimeMillis());
+                    GreenDaoManager.getBookMarkDao().insertInTx(bookMark);
                 } catch (SQLException e) {
                     Toast.makeText(ReadActivity.this, "该书签已存在", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(ReadActivity.this, "添加书签失败", Toast.LENGTH_SHORT).show();
                 }
-                mToolpop.dismiss();
-                mToolpop3.dismiss();
+                hideSystemUI();
                 break;
             // 我的书签按钮
             case R.id.Btn_mark_my:
