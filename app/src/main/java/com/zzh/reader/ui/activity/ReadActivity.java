@@ -602,12 +602,15 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                     bookMark.setBookMark(word);
                     bookMark.setTime(System.currentTimeMillis());
                     GreenDaoManager.getBookMarkDao().insertInTx(bookMark);
+                    showMessage("书签添加成功");
                 } catch (SQLException e) {
                     Toast.makeText(ReadActivity.this, "该书签已存在", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(ReadActivity.this, "添加书签失败", Toast.LENGTH_SHORT).show();
                 }
-                hideSystemUI();
+                show = false;
+                EventUtils.sendEventRefreshBookMarks();
+                popDismiss();
                 break;
             // 我的书签按钮
             case R.id.Btn_mark_my:

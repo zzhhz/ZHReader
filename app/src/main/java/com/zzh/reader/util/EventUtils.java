@@ -59,4 +59,10 @@ public class EventUtils {
         intent.setAction(Constants.ACTION_SHOW_DELETE_BOOK_LIST);
         EventBus.getDefault().post(intent);
     }
+
+    public static void sendEventRefreshBookMarks() {
+        Intent intent = new Intent();
+        intent.setAction(Constants.ACTION_REFRESH_BOOK_MARK_LIST);
+        EventBus.getDefault().post(intent);
+    }
 }

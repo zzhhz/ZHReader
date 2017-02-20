@@ -23,7 +23,31 @@ import com.zzh.reader.util.GreenDaoManager;
 import java.util.List;
 
 /**
- * Created by Administrator on 2016/1/11.
+ *
+ *----------Dragon be here!----------/
+ * 　　　┏┓　　　┏┓
+ * 　　┏┛┻━━━┛┻┓
+ * 　　┃　　　　　　　┃
+ * 　　┃　　　━　　　┃
+ * 　　┃　┳┛　┗┳　┃
+ * 　　┃　　　　　　　┃
+ * 　　┃　　　┻　　　┃
+ * 　　┃　　　　　　　┃
+ * 　　┗━┓　　　┏━┛
+ * 　　　　┃　　　┃神兽保佑
+ * 　　　　┃　　　┃代码无BUG！
+ * 　　　　┃　　　┗━━━┓
+ * 　　　　┃　　　　　　　┣┓
+ * 　　　　┃　　　　　　　┏┛
+ * 　　　　┗┓┓┏━┳┓┏┛
+ * 　　　　　┃┫┫　┃┫┫
+ * 　　　　　┗┻┛　┗┻┛
+ * ━━━━━━神兽出没━永无BUG━━━━━
+ * @Date: 2017/2/20 10:03
+ * @Email: zzh_hz@126.com
+ * @QQ: 1299234582
+ * @Author: zzh
+ * @Description: BookMarkFragment.java 书签列表页面
  */
 public class BookMarkFragment extends BaseReaderFragment implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private List<BookMark> bookMarksList;
@@ -88,10 +112,10 @@ public class BookMarkFragment extends BaseReaderFragment implements View.OnClick
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-        itemPosition = arg2;
-        if (bookMarksList.size() > arg2) {
-            showDeleteMarkPop(arg1, arg2);
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        itemPosition = position;
+        if (bookMarksList.size() > position) {
+            showDeleteMarkPop(view, position);
         }
         return true;
     }
@@ -129,13 +153,16 @@ public class BookMarkFragment extends BaseReaderFragment implements View.OnClick
      * @param position
      */
     private void showDeleteMarkPop(View view, int position) {
-
         TextView deleteMark_TV = (TextView) delateMarkPopView.findViewById(R.id.delete_mark_tv);
         TextView deleteAllMark_TV = (TextView) delateMarkPopView.findViewById(R.id.delte_allmark_tv);
         deleteMark_TV.setOnClickListener(this);
         deleteAllMark_TV.setOnClickListener(this);
         int popHeight = deleteMarkPop.getContentView().getMeasuredHeight();//注意获取高度的方法
-        deleteMarkPop.showAsDropDown(view, 0, -view.getHeight() - popHeight);
+        if (position ==0) {
+            deleteMarkPop.showAsDropDown(view, 0, view.getHeight()-popHeight);
+        } else {
+            deleteMarkPop.showAsDropDown(view, 0, -view.getHeight() - popHeight);
+        }
     }
 
     @Override
