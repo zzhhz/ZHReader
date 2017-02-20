@@ -1,5 +1,6 @@
 package com.zzh.reader;
 
+import android.app.Application;
 import android.content.Context;
 
 import com.zzh.reader.util.GreenDaoManager;
@@ -33,7 +34,7 @@ import com.zzh.reader.util.GreenDaoManager;
  * @Description:
  */
 
-public class ReaderApplication extends org.litepal.LitePalApplication {
+public class ReaderApplication extends Application {
     private static ReaderApplication mInstance;
     public ReaderApplication() {
         super();

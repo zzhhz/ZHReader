@@ -3,8 +3,10 @@ package com.zzh.reader.util;
 import com.zzh.reader.ReaderApplication;
 import com.zzh.reader.dao.BookDao;
 import com.zzh.reader.dao.BookMarkDao;
+import com.zzh.reader.dao.CatalogueDao;
 import com.zzh.reader.dao.DaoMaster;
 import com.zzh.reader.dao.DaoSession;
+import com.zzh.reader.model.Catalogue;
 
 /**
  * ----------Dragon be here!----------/
@@ -95,5 +97,8 @@ public class GreenDaoManager {
      */
     public static BookMarkDao getBookMarkDao(){
         return getInstance().getDaoSession().getBookMarkDao();
+    }
+    public static CatalogueDao getCatalogueDao(){
+        return getInstance().getDaoSession().getCatalogueDao();
     }
 }

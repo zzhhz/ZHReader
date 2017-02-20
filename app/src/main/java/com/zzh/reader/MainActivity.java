@@ -22,7 +22,6 @@ import com.zzh.reader.activity.FileActivity;
 import com.zzh.reader.adapter.SelfAdapter;
 import com.zzh.reader.base.BaseReaderNoSwipeActivity;
 import com.zzh.reader.dao.BookDao;
-import com.zzh.reader.database.BookList;
 import com.zzh.reader.model.Book;
 import com.zzh.reader.ui.activity.ReadActivity;
 import com.zzh.reader.ui.activity.WebActivity;
@@ -54,7 +53,6 @@ public class MainActivity extends BaseReaderNoSwipeActivity implements SelfAdapt
     protected DrawerLayout drawerLayout;
     @BindView(R.id.navigationView)
     protected NavigationView navigationView;
-    private List<BookList> bookLists;
     SelfAdapter mAdapter;
     private BookView mOpenBookView; //打开的那一本图书
     private boolean isOpen = false;//是否打开了图书
@@ -293,6 +291,7 @@ public class MainActivity extends BaseReaderNoSwipeActivity implements SelfAdapt
         Intent intent = new Intent(mContext, ReadActivity.class);
         intent.putExtra("bookname", book.getBookName());
         intent.putExtra("bookpath", book.getBookPath());
+        intent.putExtra(ReadActivity.DATA_BOOK, book);
         startActivity(intent);
     }
 

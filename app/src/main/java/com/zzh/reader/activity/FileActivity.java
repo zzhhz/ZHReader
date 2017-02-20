@@ -166,13 +166,18 @@ public class FileActivity extends BaseReaderActivity implements FileAdapter.OnCl
             //点击的是一个文件打开
             BookDao bookDao = GreenDaoManager.getInstance().getDaoSession().getBookDao();
             List<Book> books = bookDao.queryRaw(" WHERE bookName =? AND bookPath = ?", file.getName(), file.getAbsolutePath());
+            Book entity = null;
             if (books == null || books.size()<=0){
                 //添加到数据库
-                bookDao.insert(new Book(null, file.getName(), file.getAbsolutePath(), null));
+                entity = new Book(null, file.getName(), file.getAbsolutePath(), null, false);
+                bookDao.insert(entity);
+            } else {
+                entity = books.get(0);
             }
             Intent intent = new Intent(this, ReadActivity.class);
             intent.putExtra("bookname",file.getName());
             intent.putExtra("bookpath", file.getAbsolutePath());
+            intent.putExtra(ReadActivity.DATA_BOOK, entity);
             EventUtils.sendEventRefreshBookList();
             startActivity(intent);
         }
@@ -251,7 +256,7 @@ public class FileActivity extends BaseReaderActivity implements FileAdapter.OnCl
                 for (String bookPath :
                         checkedFiles) {
                     File tmp = new File(bookPath);
-                    Book e = new Book(null, tmp.getName(), bookPath, null);
+                    Book e = new Book(null, tmp.getName(), bookPath, null, false);
                     books.add(e);
                 }
                 GreenDaoManager.getBookDao().insertInTx(books);

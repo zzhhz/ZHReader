@@ -189,8 +189,15 @@ public class SelfAdapter extends BaseAdapter implements DragGridListener {
      */
     private void updateBoot2Db(long dataBaseId, Book book, Book book1) {
         BookDao dao = GreenDaoManager.getInstance().getDaoSession().getBookDao();
-        Book book2 = new Book(dataBaseId, book1.getBookName(), book.getBookPath(), null);
-        dao.update(book2);
+        Book load = dao.load(dataBaseId);
+        if (load == null) {
+            Book book2 = new Book(dataBaseId, book1.getBookName(), book.getBookPath(), null, false);
+            dao.update(book2);
+        }else {
+            load.setBookName(book1.getBookName());
+            load.setBookPath(book.getBookPath());
+            dao.update(load);
+        }
     }
 
     @Override

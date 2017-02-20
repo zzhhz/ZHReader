@@ -57,6 +57,7 @@ import com.zzh.reader.base.BaseReaderNoSwipeActivity;
 import com.zzh.reader.fragment.BookMarkFragment;
 import com.zzh.reader.fragment.CatalogueFragment;
 import com.zzh.reader.fragment.NotesFragment;
+import com.zzh.reader.model.Book;
 import com.zzh.reader.model.BookMark;
 import com.zzh.reader.util.BookPageFactory;
 import com.zzh.reader.util.CommonUtil;
@@ -79,10 +80,12 @@ import butterknife.ButterKnife;
  * @Email: zzh_hz@126.com
  * @QQ: 1299234582
  * @Author: zzh
- * @Description: 开始阅读页面。
+ * @Description: 开始阅读页面。<br/>
+ * 需要优化加载书签，只加载一次，在第一次打开书籍的时候<br/>
  */
 public class ReadActivity extends BaseReaderNoSwipeActivity implements
-        SeekBar.OnSeekBarChangeListener {
+        SeekBar.OnSeekBarChangeListener, CatalogueFragment.OnClickCatalogListener {
+    public static final String DATA_BOOK = "data_book";
     private LinearLayout layout;
     private static final String TAG = "Read2";
     private static int begin = 0;// 记录的书籍开始位置
@@ -144,7 +147,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
     private String[] mCloudVoicersValue;
     private int selectedNum = 0;//选择导入书架的书本数量
     private AudioManager audio;
-    private Typeface typeface;
+    //private Typeface typeface;
     @BindView(R.id.navigationView)
     protected NavigationView mNoteView;
     @BindView(R.id.read_drawer_layout)
@@ -156,6 +159,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
     protected BookMarkFragment mArkFragment;
     protected CatalogueFragment mCatalogFragment;
     protected NotesFragment mNotesFragment;
+    private Book mBook;
     ///
     private int index = -1;
 
@@ -176,7 +180,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//保存屏幕常亮
         hideSystemUI();//隐藏
         mContext = getBaseContext();
-        typeface = Typeface.createFromAsset(getApplicationContext().getAssets(), "font/QH.ttf");
+        //typeface = Typeface.createFromAsset(getApplicationContext().getAssets(), "font/QH.ttf");
         scale = (int) mContext.getResources().getDisplayMetrics().density;
         mViewPager = (ViewPager) mNoteView.findViewById(R.id.viewPager);
         mTabLayout = (TabLayout) mNoteView.findViewById(R.id.tabLayout);
@@ -226,6 +230,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
         getWindow().setAttributes(lp);
         //获取intent中的携带的信息
         Intent intent = getIntent();
+        mBook = (Book) intent.getSerializableExtra(DATA_BOOK);
         bookPath = intent.getStringExtra("bookpath");
         bookName = intent.getStringExtra("bookname");
         ccc = intent.getStringExtra("ccc");
@@ -257,12 +262,22 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
             pagefactory.onDraw(mCurPageCanvas);
             word = pagefactory.getFirstTwoLineText();// 获取当前阅读位置的前两行文字,用作书签
             editor.putInt(bookPath + "begin", begin).apply();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    pagefactory.getBookInfo();  //获取章节目录
-                }
-            }).start();
+            if (!mBook.isCatalogue()){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            pagefactory.getBookInfo(mBook.getBookPath());  //获取章节目录
+                            mBook.setIsCatalogue(true);
+                            GreenDaoManager.getBookDao().insertOrReplace(mBook);
+                            EventUtils.sendEventRefreshBookList();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+
         } catch (IOException e) {
             showMessage("打开电子书失败");
         }
@@ -333,7 +348,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                         int x = (int) e.getX();
                         int y = (int) e.getY();
                         //Action_Down时在中间位置显示菜单
-                        if (x > screenWidth / 3 && x < screenWidth * 2 / 3 && y > screenHeight / 3 && y < screenHeight * 2 / 3) {
+                        if (x > screenWidth / 3 && x < screenWidth * 2 / 3 && y > screenHeight / 4 && y < screenHeight * 3 / 4) {
                             if (!voiceListining && !show) {
                                 showSystemUI();
                                 pop();
@@ -410,8 +425,8 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                     // 对数据的记录
                 popDismiss();
                 hideSystemUI();
-                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
                 mViewPager.setCurrentItem(0);
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
             }
 
             @Override
@@ -421,7 +436,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
 
             @Override
             public void onDrawerStateChanged(int newState) {
-
+                show = false;
             }
         });
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -444,6 +459,8 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
 
             }
         });
+
+        mCatalogFragment.setOnClickCatalogListener(this);
     }
 
     @Override
@@ -857,11 +874,11 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
         readJump = (TextView) popupwindwow.findViewById(R.id.bookBtn_jump);
         readSet = (TextView) popupwindwow.findViewById(R.id.readSet);
         layout = (LinearLayout) popupwindwow.findViewById(R.id.bookpop_bottom);//主要为了夜间模式时设置背景
-        fontSize.setTypeface(typeface);//设置字体
-        readLight.setTypeface(typeface);
-        bookMark.setTypeface(typeface);
-        readJump.setTypeface(typeface);
-        readSet.setTypeface(typeface);
+//        fontSize.setTypeface(typeface);//设置字体
+//        readLight.setTypeface(typeface);
+//        bookMark.setTypeface(typeface);
+//        readJump.setTypeface(typeface);
+//        readSet.setTypeface(typeface);
 
         TextView blank_view = (TextView) popupwindwow.findViewById(R.id.blank_view);
         listener_book = (ImageButton) popupwindwow.findViewById(R.id.listener_book);
@@ -976,8 +993,8 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                     seekBar1 = (SeekBar) toolpop1.findViewById(R.id.seekBar_size);
                     fontBig = (TextView) toolpop1.findViewById(R.id.size_plus);
                     fontSmall = (TextView) toolpop1.findViewById(R.id.size_decrease);
-                    fontBig.setTypeface(typeface);
-                    fontSmall.setTypeface(typeface);
+//                    fontBig.setTypeface(typeface);
+//                    fontSmall.setTypeface(typeface);
                     fontsize = sp.getInt("size", defaultFontSize);
                     seekBar1.setProgress((fontsize - minFontSize));
                     seekBar1.setOnSeekBarChangeListener(this);
@@ -996,8 +1013,8 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                     seekBar2 = (SeekBar) toolpop2.findViewById(R.id.seekBar_light);
                     lightPlus = (TextView) toolpop2.findViewById(R.id.light_plus);
                     linghtDecrease = (TextView) toolpop2.findViewById(R.id.light_decrease);
-                    lightPlus.setTypeface(typeface);
-                    linghtDecrease.setTypeface(typeface);
+//                    lightPlus.setTypeface(typeface);
+//                    linghtDecrease.setTypeface(typeface);
                     getLight();
                     seekBar2.setProgress(light);
                     seekBar2.setOnSeekBarChangeListener(this);
@@ -1012,8 +1029,8 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                         mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                     btn_mark_add = (TextView) toolpop3.findViewById(R.id.Btn_mark_add);
                     btn_mark_my = (TextView) toolpop3.findViewById(R.id.Btn_mark_my);
-                    btn_mark_add.setTypeface(typeface);
-                    btn_mark_my.setTypeface(typeface);
+//                    btn_mark_add.setTypeface(typeface);
+//                    btn_mark_my.setTypeface(typeface);
                     btn_mark_add.setOnClickListener(this);
                     btn_mark_my.setOnClickListener(this);
                 }
@@ -1032,9 +1049,9 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                     jumpCancel = (TextView) toolpop4.findViewById(R.id.jump_cancel);
                     seekBar4 = (SeekBar) toolpop4.findViewById(R.id.seekBar_jump);
                     markEdit4 = (TextView) toolpop4.findViewById(R.id.markEdit4);
-                    jumpOk.setTypeface(typeface);
-                    jumpCancel.setTypeface(typeface);
-                    markEdit4.setTypeface(typeface);
+//                    jumpOk.setTypeface(typeface);
+//                    jumpCancel.setTypeface(typeface);
+//                    markEdit4.setTypeface(typeface);
                     // begin = sp.getInt(bookPath + "begin", 1);
                     float fPercent = (float) (begin * 1.0 / pagefactory.getM_mbBufLen());
                     DecimalFormat df = new DecimalFormat("#0");
@@ -1081,8 +1098,8 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                 seekBar1 = (SeekBar) toolpop1.findViewById(R.id.seekBar_size);
                 fontBig = (TextView) toolpop1.findViewById(R.id.size_plus);
                 fontSmall = (TextView) toolpop1.findViewById(R.id.size_decrease);
-                fontBig.setTypeface(typeface);
-                fontSmall.setTypeface(typeface);
+//                fontBig.setTypeface(typeface);
+//                fontSmall.setTypeface(typeface);
                 fontsize = sp.getInt("size", defaultFontSize);
                 seekBar1.setProgress(fontsize - minFontSize);
                 seekBar1.setOnSeekBarChangeListener(this);
@@ -1100,8 +1117,8 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                 seekBar2 = (SeekBar) toolpop2.findViewById(R.id.seekBar_light);
                 lightPlus = (TextView) toolpop2.findViewById(R.id.light_plus);
                 linghtDecrease = (TextView) toolpop2.findViewById(R.id.light_decrease);
-                lightPlus.setTypeface(typeface);
-                linghtDecrease.setTypeface(typeface);
+//                lightPlus.setTypeface(typeface);
+//                linghtDecrease.setTypeface(typeface);
                 getLight();
                 seekBar2.setProgress(light);
                 seekBar2.setOnSeekBarChangeListener(this);
@@ -1116,8 +1133,8 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                     mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 70 * scale);
                 btn_mark_add = (TextView) toolpop3.findViewById(R.id.Btn_mark_add);
                 btn_mark_my = (TextView) toolpop3.findViewById(R.id.Btn_mark_my);
-                btn_mark_add.setTypeface(typeface);
-                btn_mark_my.setTypeface(typeface);
+//                btn_mark_add.setTypeface(typeface);
+//                btn_mark_my.setTypeface(typeface);
                 btn_mark_add.setOnClickListener(this);
                 btn_mark_my.setOnClickListener(this);
             }
@@ -1134,9 +1151,9 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
                 jumpCancel = (TextView) toolpop4.findViewById(R.id.jump_cancel);
                 seekBar4 = (SeekBar) toolpop4.findViewById(R.id.seekBar_jump);
                 markEdit4 = (TextView) toolpop4.findViewById(R.id.markEdit4);
-                jumpOk.setTypeface(typeface);
-                jumpCancel.setTypeface(typeface);
-                markEdit4.setTypeface(typeface);
+//                jumpOk.setTypeface(typeface);
+//                jumpCancel.setTypeface(typeface);
+//                markEdit4.setTypeface(typeface);
                 float fPercent = (float) (begin * 1.0 / pagefactory.getM_mbBufLen());
                 DecimalFormat df = new DecimalFormat("#0");
                 String strPercent = df.format(fPercent * 100) + "%";
@@ -1211,8 +1228,7 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
     }
 
     private void showTip(final String str) {
-        mToast.setText(str);
-        mToast.show();
+        showMessage(str);
     }
 
     /**
@@ -1440,11 +1456,9 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
      */
     @TargetApi(21)
     private void setupWindowAnimations() {
-
         Fade fade = new Fade();
         fade.setDuration(500);
         getWindow().setEnterTransition(fade);
-
         Slide slide = new Slide();
         slide.setDuration(500);
         getWindow().setReturnTransition(fade);
@@ -1460,4 +1474,19 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
         return bookPath;
     }
 
+    @Override
+    public void onClickCatalog(int position, String path) {
+        show = false;
+        try {
+            begin = position;
+            word = pagefactory.getFirstTwoLineText();// 获取当前阅读位置的前两行文字,用作书签
+            editor.putInt(bookPath + "begin", begin).apply();
+            pagefactory.setM_mbBufBegin(begin);
+            pagefactory.setM_mbBufEnd(begin);
+            postInvalidateUI();
+            mDrawerLayout.closeDrawer(mNoteView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

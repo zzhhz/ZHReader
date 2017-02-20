@@ -28,6 +28,7 @@ public class BookDao extends AbstractDao<Book, Long> {
         public final static Property BookName = new Property(1, String.class, "bookName", false, "bookName");
         public final static Property BookPath = new Property(2, String.class, "bookPath", false, "bookPath");
         public final static Property BookCover = new Property(3, String.class, "bookCover", false, "bookCover");
+        public final static Property IsCatalogue = new Property(4, boolean.class, "isCatalogue", false, "isCatalogue");
     }
 
 
@@ -46,7 +47,8 @@ public class BookDao extends AbstractDao<Book, Long> {
                 "\"bookId\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: bookId
                 "\"bookName\" TEXT," + // 1: bookName
                 "\"bookPath\" TEXT," + // 2: bookPath
-                "\"bookCover\" TEXT);"); // 3: bookCover
+                "\"bookCover\" TEXT," + // 3: bookCover
+                "\"isCatalogue\" INTEGER NOT NULL );"); // 4: isCatalogue
     }
 
     /** Drops the underlying database table. */
@@ -78,6 +80,7 @@ public class BookDao extends AbstractDao<Book, Long> {
         if (bookCover != null) {
             stmt.bindString(4, bookCover);
         }
+        stmt.bindLong(5, entity.getIsCatalogue() ? 1L: 0L);
     }
 
     @Override
@@ -103,6 +106,7 @@ public class BookDao extends AbstractDao<Book, Long> {
         if (bookCover != null) {
             stmt.bindString(4, bookCover);
         }
+        stmt.bindLong(5, entity.getIsCatalogue() ? 1L: 0L);
     }
 
     @Override
@@ -116,7 +120,8 @@ public class BookDao extends AbstractDao<Book, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // bookId
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // bookName
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // bookPath
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // bookCover
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // bookCover
+            cursor.getShort(offset + 4) != 0 // isCatalogue
         );
         return entity;
     }
@@ -127,6 +132,7 @@ public class BookDao extends AbstractDao<Book, Long> {
         entity.setBookName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setBookPath(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setBookCover(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setIsCatalogue(cursor.getShort(offset + 4) != 0);
      }
     
     @Override

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -18,10 +17,9 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.zzh.reader.R;
+import com.zzh.reader.dao.CatalogueDao;
+import com.zzh.reader.model.Catalogue;
 import com.zzh.reader.ui.activity.ReadActivity;
-import com.zzh.reader.database.BookCatalogue;
-
-import org.litepal.crud.DataSupport;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,7 +66,7 @@ public class BookPageFactory {
     int BufEnd = 0;
     private int mstartpos = 0;
     private int m_textColor = Color.rgb(50, 65, 78);
-    private static Typeface typeface;
+    //private static Typeface typeface;
     private int marginHeight ; // 上下与边缘的距离
     private int marginWidth ; // 左右与边缘的距离
     private int mHeight;
@@ -101,12 +99,12 @@ public class BookPageFactory {
         mBorderWidth = context.getResources().getDimension(R.dimen.reading_board_battery_border_width);
         marginWidth = (int) context.getResources().getDimension(R.dimen.readingMarginWidth);
         marginHeight = (int) context.getResources().getDimension(R.dimen.readingMarginHeight);
-        typeface = Typeface.createFromAsset(context.getAssets(), "font/QH.ttf");
+        //typeface = Typeface.createFromAsset(context.getAssets(), "font/QH.ttf");
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);// 画笔
         mPaint.setTextAlign(Paint.Align.LEFT);// 左对齐
         mPaint.setTextSize(m_fontSize);// 字体大小
         mPaint.setColor(m_textColor);// 字体颜色
-        mPaint.setTypeface(typeface);
+        //mPaint.setTypeface(typeface);
         mPaint.setSubpixelText(true);// 设置该项为true，将有助于文本在LCD屏幕上的显示效果
         mVisibleWidth = mWidth - marginWidth * 2;
         mVisibleHeight = mHeight - marginHeight * 2;
@@ -116,7 +114,7 @@ public class BookPageFactory {
 
         mBatterryPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBatterryPaint.setTextSize(CommonUtil.sp2px(context, 12));
-        mBatterryPaint.setTypeface(typeface);
+        //mBatterryPaint.setTypeface(typeface);
         mBatterryPaint.setTextAlign(Paint.Align.LEFT);
         mBatterryPaint.setColor(m_textColor);
     }
@@ -295,7 +293,6 @@ public class BookPageFactory {
 
             if(strParagraph.contains("第") && strParagraph.contains("章")) {
                 int m_mstartpos = mstartpos-paraBuf.length;//获得章节段落开始位置
-                BookCatalogue bookCatalogue1 = new BookCatalogue();//每次保存后都要新建一个
                 strParagraph = strParagraph.trim();//去除字符串前后空格
                 //去除全角空格
                 while (strParagraph.startsWith("　")) {
@@ -303,16 +300,50 @@ public class BookPageFactory {
                 }
                 bookCatalogue.add(strParagraph);   //保存到数组
                 bookCatalogueStartPos.add(m_mstartpos);
-                bookCatalogue1.setBookCatalogue(strParagraph);  //保存到数据库
-                bookCatalogue1.setBookCatalogueStartPos(m_mstartpos);
-                bookCatalogue1.setBookpath(ReadActivity.getBookPath());
-                String sql = "SELECT id FROM bookcatalogue WHERE bookcatalogue =? and bookCatalogueStartPos =?";
-                Cursor cursor = DataSupport.findBySQL(sql,strParagraph,m_mstartpos +"");
-                if(!cursor.moveToFirst()) {
-                    bookCatalogue1.save();
-                }
             }
         }
+    }
+    /**
+     *   提取章节目录及值
+     */
+    public List<Catalogue> getBookInfo(String bookPath) throws Exception{
+        List<Catalogue> list = new ArrayList<>();
+        CatalogueDao catalogueDao = GreenDaoManager.getInstance().getDaoSession().getCatalogueDao();
+        String strParagraph = "";
+        while (mstartpos < m_mbBufLen-1) {
+            byte[] paraBuf = readParagraphForward(mstartpos);
+            mstartpos += paraBuf.length;// 每次读取后，记录结束点位置，该位置是段落结束位置
+            try {
+                strParagraph = new String(paraBuf, m_strCharsetName);// 转换成制定GBK编码
+            } catch (UnsupportedEncodingException e) {
+                Log.e(TAG, "pageDown->转换编码失败", e);
+            }
+            EditText editText;
+            String strReturn = "";
+            // 替换掉回车换行符,防止段落发生错乱
+            if (strParagraph.indexOf("\r\n") != -1) {   //windows
+                strReturn = "\r\n";
+                strParagraph = strParagraph.replaceAll("\r\n", "");
+            } else if (strParagraph.indexOf("\n") != -1) {    //linux
+                strReturn = "\n";
+                strParagraph = strParagraph.replaceAll("\n", "");
+            }
+
+            if(strParagraph.contains("第") && strParagraph.contains("章")) {
+                int m_mstartpos = mstartpos-paraBuf.length;//获得章节段落开始位置
+                strParagraph = strParagraph.trim();//去除字符串前后空格
+                //去除全角空格
+                while (strParagraph.startsWith("　")) {
+                    strParagraph = strParagraph.substring(1, strParagraph.length()).trim();
+                }
+                bookCatalogue.add(strParagraph);   //保存到数组
+                bookCatalogueStartPos.add(m_mstartpos);
+                Catalogue catalogue = new Catalogue(null,m_mstartpos, strParagraph,bookPath);
+                catalogueDao.insert(catalogue);
+                Log.d(TAG, "getBookInfo:------ "+catalogue);
+            }
+        }
+        return list;
     }
     /**
      * 得到上上页的结束位置

@@ -18,17 +18,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 2016/1/3.
+ *
+ *----------Dragon be here!----------/
+ * 　　　┏┓　　　┏┓
+ * 　　┏┛┻━━━┛┻┓
+ * 　　┃　　　　　　　┃
+ * 　　┃　　　━　　　┃
+ * 　　┃　┳┛　┗┳　┃
+ * 　　┃　　　　　　　┃
+ * 　　┃　　　┻　　　┃
+ * 　　┃　　　　　　　┃
+ * 　　┗━┓　　　┏━┛
+ * 　　　　┃　　　┃神兽保佑
+ * 　　　　┃　　　┃代码无BUG！
+ * 　　　　┃　　　┗━━━┓
+ * 　　　　┃　　　　　　　┣┓
+ * 　　　　┃　　　　　　　┏┛
+ * 　　　　┗┓┓┏━┳┓┏┛
+ * 　　　　　┃┫┫　┃┫┫
+ * 　　　　　┗┻┛　┗┻┛
+ * ━━━━━━神兽出没━永无BUG━━━━━
+ * @Date: 2017/2/20 14:46
+ * @Email: zzh_hz@126.com
+ * @QQ: 1299234582
+ * @Author: zzh
+ * @Description: MarkAdapter.java 标签列表
  */
 public class MarkAdapter extends BaseAdapter {
     private Context mContext;
     private List<BookMark> dataList;
-    private Typeface typeface;
+//    private Typeface typeface;
     public MarkAdapter(Context context, List<BookMark> list) {
          mContext = context;
          this.dataList = new ArrayList<>();
         this.dataList.addAll(list);
-         typeface = Typeface.createFromAsset(mContext.getAssets(),"font/QH.ttf");
+//         typeface = Typeface.createFromAsset(mContext.getAssets(),"font/QH.ttf");
     }
 
     @Override
@@ -61,9 +85,9 @@ public class MarkAdapter extends BaseAdapter {
             viewHolder.text_mark = (TextView) convertView.findViewById(R.id.text_mark);
             viewHolder.progress1 = (TextView) convertView.findViewById(R.id.progress1);
             viewHolder.mark_time = (TextView) convertView.findViewById(R.id.mark_time);
-            viewHolder.text_mark.setTypeface(typeface);
-            viewHolder.progress1.setTypeface(typeface);
-            viewHolder.mark_time.setTypeface(typeface);
+//            viewHolder.text_mark.setTypeface(typeface);
+//            viewHolder.progress1.setTypeface(typeface);
+//            viewHolder.mark_time.setTypeface(typeface);
             convertView.setTag(viewHolder);
         }else {
             viewHolder = (ViewHolder) convertView.getTag();

@@ -38,7 +38,7 @@ import java.util.List;
  * @Email: zzh_hz@126.com
  * @QQ: 1299234582
  * @Author: zzh
- * @Description: ${DESC}
+ * @Description: 侧滑菜单的标题适配器
  */
 
 public class AppBarViewPagerAdapter extends FragmentStatePagerAdapter {

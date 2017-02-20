@@ -41,9 +41,6 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.activity.MarkActivity"
-            android:parentActivityName=".ui.activity.ReadActivity"/>
-        <activity
             android:name="com.zzh.test.Test2Activity"
             android:theme="@style/AppTheme"/>
         <activity android:name=".activity.FileActivity"/>

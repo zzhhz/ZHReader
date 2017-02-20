@@ -44,18 +44,23 @@ public class Book implements Serializable {
     @Id(autoincrement = true)
     private Long bookId;
     @Property(nameInDb = "bookName")
-    private String bookName;
+    private String bookName;//名称
     @Property(nameInDb = "bookPath")
-    private String bookPath;
+    private String bookPath;//书籍路径
     @Property(nameInDb = "bookCover")
-    private String bookCover;
+    private String bookCover;//封面
 
-    @Generated(hash = 1566138061)
-    public Book(Long bookId, String bookName, String bookPath, String bookCover) {
+    @Property(nameInDb = "isCatalogue")
+    private boolean isCatalogue = false; //是否生成了目录, true：生成目录，false：未生成目录
+
+    @Generated(hash = 1430242687)
+    public Book(Long bookId, String bookName, String bookPath, String bookCover,
+            boolean isCatalogue) {
         this.bookId = bookId;
         this.bookName = bookName;
         this.bookPath = bookPath;
         this.bookCover = bookCover;
+        this.isCatalogue = isCatalogue;
     }
 
     @Generated(hash = 1839243756)
@@ -94,6 +99,14 @@ public class Book implements Serializable {
         this.bookCover = bookCover;
     }
 
+    public boolean isCatalogue() {
+        return isCatalogue;
+    }
+
+    public void setCatalogue(boolean catalogue) {
+        isCatalogue = catalogue;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -111,5 +124,13 @@ public class Book implements Serializable {
         int result = bookName.hashCode();
         result = 31 * result + bookPath.hashCode();
         return result;
+    }
+
+    public boolean getIsCatalogue() {
+        return this.isCatalogue;
+    }
+
+    public void setIsCatalogue(boolean isCatalogue) {
+        this.isCatalogue = isCatalogue;
     }
 }
