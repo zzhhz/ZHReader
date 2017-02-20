@@ -90,7 +90,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileViewHolder> {
 
     @Override
     public void onBindViewHolder(FileViewHolder holder, int position) {
-        if (position < getItemCount()-1) {
+        if (position < getItemCount() - 1) {
             holder.itemView.setVisibility(View.VISIBLE);
             final File file = fileList.get(position);
             if (file.isDirectory()) {
@@ -98,15 +98,14 @@ public class FileAdapter extends RecyclerView.Adapter<FileViewHolder> {
                 holder.isCheck.setVisibility(View.GONE);
             } else {
                 holder.fileIcon.setImageResource(R.drawable.file_type_txt);
-                if (mExistBookList != null && mExistBookList.contains(file.getAbsolutePath())){
+                if (mExistBookList != null && mExistBookList.contains(file.getAbsolutePath())) {
                     holder.isCheck.setVisibility(View.GONE);
                 } else {
                     holder.isCheck.setVisibility(View.VISIBLE);
                     //判断是否选中
-                    if (mCheckedFiles.contains(file.getAbsolutePath())){
+                    if (mCheckedFiles.contains(file.getAbsolutePath())) {
                         holder.isCheck.setChecked(true);
-                    }else
-                    {
+                    } else {
                         holder.isCheck.setChecked(false);
                     }
                 }
@@ -126,7 +125,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileViewHolder> {
                     if (isChecked) {
                         mCheckedFiles.add(file.getAbsolutePath());
                     } else {
-                        Log.d("----", "onCheckedChanged: =------"+isChecked);
                         mCheckedFiles.remove(file.getAbsolutePath());
                     }
                 }
@@ -138,15 +136,14 @@ public class FileAdapter extends RecyclerView.Adapter<FileViewHolder> {
 
     @Override
     public int getItemCount() {
-        return fileList.size()+1;
+        return fileList.size() + 1;
     }
 
     public void clear() {
         fileList.clear();
     }
 
-    public interface OnClickItemListener
-    {
+    public interface OnClickItemListener {
         void onClickFile(File file);
     }
 

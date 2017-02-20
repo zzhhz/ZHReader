@@ -1,7 +1,6 @@
 package com.zzh.reader.adapter;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,12 +46,10 @@ import java.util.List;
 public class MarkAdapter extends BaseAdapter {
     private Context mContext;
     private List<BookMark> dataList;
-//    private Typeface typeface;
     public MarkAdapter(Context context, List<BookMark> list) {
          mContext = context;
          this.dataList = new ArrayList<>();
         this.dataList.addAll(list);
-//         typeface = Typeface.createFromAsset(mContext.getAssets(),"font/QH.ttf");
     }
 
     @Override
@@ -85,9 +82,6 @@ public class MarkAdapter extends BaseAdapter {
             viewHolder.text_mark = (TextView) convertView.findViewById(R.id.text_mark);
             viewHolder.progress1 = (TextView) convertView.findViewById(R.id.progress1);
             viewHolder.mark_time = (TextView) convertView.findViewById(R.id.mark_time);
-//            viewHolder.text_mark.setTypeface(typeface);
-//            viewHolder.progress1.setTypeface(typeface);
-//            viewHolder.mark_time.setTypeface(typeface);
             convertView.setTag(viewHolder);
         }else {
             viewHolder = (ViewHolder) convertView.getTag();

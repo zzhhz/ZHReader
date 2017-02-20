@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.zzh.reader.activity.FileActivity;
@@ -101,12 +100,6 @@ public class MainActivity extends BaseReaderNoSwipeActivity implements SelfAdapt
 
     @Override
     protected void handlerMessage(Message message) {
-        bookShelf.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showMessage("==" + position);
-            }
-        });
     }
 
     /**

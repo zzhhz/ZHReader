@@ -39,7 +39,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public abstract class BaseReaderFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onEventMainThread(Intent intent){
+    protected void onEventMainThread(Intent intent) {
 
     }
 }

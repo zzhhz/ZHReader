@@ -44,13 +44,10 @@ import java.util.List;
 public class CatalogueAdapter extends BaseAdapter {
     private Context mContext;
     private List<Catalogue> dataList;
-    //private Typeface typeface;
-
     public CatalogueAdapter(Context context, List<Catalogue> bookCatalogueList) {
         mContext = context;
         this.dataList = new ArrayList<>();
         this.dataList.addAll(bookCatalogueList);
-//        typeface = Typeface.createFromAsset(mContext.getAssets(), "font/QH.ttf");
     }
 
     @Override
@@ -76,7 +73,6 @@ public class CatalogueAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             convertView = inflater.inflate(R.layout.cataloguelistview_item, null);
             viewHolder.catalogue_tv = (TextView) convertView.findViewById(R.id.catalogue_tv);
-//            viewHolder.catalogue_tv.setTypeface(typeface);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
