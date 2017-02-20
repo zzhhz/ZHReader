@@ -134,6 +134,7 @@ public class CatalogueDao extends AbstractDao<Catalogue, Void> {
 
     @Override
     public boolean hasKey(Catalogue entity) {
+        // TODO
         return false;
     }
 

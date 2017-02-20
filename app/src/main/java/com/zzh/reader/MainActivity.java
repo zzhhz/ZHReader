@@ -116,12 +116,15 @@ public class MainActivity extends BaseReaderNoSwipeActivity implements SelfAdapt
                 switch (menuItem.getItemId()){
                     case R.id.nav_blog:
                         Intent intent = new Intent(mContext, WebActivity.class);
-                        intent.putExtra(WebActivity.OPEN_URL, "http://zzhhz.blog.51cto.com");
+                        intent.putExtra(WebActivity.OPEN_URL, Constants.URL_MY_BLOG);
                         startActivity(intent);
                         break;
                     case R.id.nav_ver://版本信息
                         break;
                     case R.id.nav_about:
+                        Intent intentA = new Intent(mContext, WebActivity.class);
+                        intentA.putExtra(WebActivity.OPEN_URL, Constants.URL_MY_GITHUB);
+                        startActivity(intentA);
                         break;
                     case R.id.sub_exit://退出
                         MainActivity.this.finish();
