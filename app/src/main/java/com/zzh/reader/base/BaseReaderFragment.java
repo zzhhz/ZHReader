@@ -1,9 +1,12 @@
 package com.zzh.reader.base;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 
 import com.zzh.zlibs.base.BaseFragment;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -38,8 +41,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public abstract class BaseReaderFragment extends BaseFragment {
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onEventMainThread(Intent intent) {
+    public void onEventMainThread(Intent intent) {
 
     }
 }

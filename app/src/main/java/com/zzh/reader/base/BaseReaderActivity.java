@@ -56,7 +56,7 @@ public abstract class BaseReaderActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onEventMainThread(Object obj) {
+    public void onEventMainThread(Object obj) {
 
     }
 }

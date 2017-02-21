@@ -154,36 +154,7 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
 
     @Override
     protected void initSetListener() {
-        /*mBookGrid.addOnItemTouchListener(new OnRecyclerItemClickListener(mBookGrid) {
-            @Override
-            public void onItemClick(RecyclerView.ViewHolder vh) {
-                int position = vh.getAdapterPosition();
-                if (position >= 0) {
-                    Book book = mAdapter.getItemObject(position);
-
-                    mOpenBookView = ((BookViewHolder) vh).bookView;
-                    resetDragGridView();
-                    isOpen = true;
-                    Intent intent = new Intent(mContext, ReadActivity.class);
-                    intent.putExtra("bookname", book.getBookName());
-                    intent.putExtra("bookpath", book.getBookPath());
-                    intent.putExtra(ReadActivity.DATA_BOOK, book);
-
-                    //startActivity(intent);
-                }
-                showMessage(position + "");
-                Log.d(TAG, "onItemClick: " + position);
-            }
-
-            @Override
-            public void onLongClick(RecyclerView.ViewHolder vh) {
-                mAdapter.setShowDeleteButton(true);
-                if (vh.getLayoutPosition() != mAdapter.getItemCount() - 1) {
-                    itemTouchHelper.startDrag(vh);
-                    VibratorUtil.Vibrate((Activity) mContext, 50);   //震动70ms
-                }
-            }
-        });*/
+        findViewById(R.id.fab).setOnClickListener(this);
         mAdapter.setOnClickListener(this);
     }
 

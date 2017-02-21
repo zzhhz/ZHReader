@@ -96,12 +96,12 @@ public class DragItemTouchCallback extends ItemTouchHelper.Callback{
             if (background == null && bkcolor == -1) {
                 Drawable drawable = viewHolder.itemView.getBackground();
                 if (drawable == null) {
-                    bkcolor = 0;
+                    bkcolor = Color.TRANSPARENT;
                 } else {
                     background = drawable;
                 }
             }
-            viewHolder.itemView.setBackgroundColor(Color.LTGRAY);
+            viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
         super.onSelectedChanged(viewHolder, actionState);
     }

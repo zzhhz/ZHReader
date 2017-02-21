@@ -13,7 +13,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.zzh.reader.MainActivity;
 import com.zzh.reader.R;
 import com.zzh.reader.base.BaseReaderActivity;
 

@@ -54,7 +54,7 @@ public abstract class BaseReaderNoSwipeActivity extends BaseNoSwipeBackActivity 
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onEventMainThread(Intent intent) {
+    public void onEventMainThread(Intent intent) {
 
     }
 }
