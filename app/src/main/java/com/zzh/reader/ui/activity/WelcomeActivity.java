@@ -82,7 +82,7 @@ public class WelcomeActivity extends BaseReaderActivity {
     }
 
     private void startApp() {
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, MainUpdateActivity.class));
         finish(); // destroy itself
     }
 

@@ -47,7 +47,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseReaderNoSwipeActivity implements SelfAdapter.OnClickBook{
 
     @BindView(R.id.bookShelf)
-    protected DragGridView bookShelf;
+    protected DragGridView mDragGridView;
     @BindView(R.id.drawer_layout)
     protected DrawerLayout drawerLayout;
     @BindView(R.id.navigationView)
@@ -83,7 +83,7 @@ public class MainActivity extends BaseReaderNoSwipeActivity implements SelfAdapt
     @Override
     protected void initData() {
         mAdapter = new SelfAdapter(mContext);
-        bookShelf.setAdapter(mAdapter);
+        mDragGridView.setAdapter(mAdapter);
         BookDao bookDao = GreenDaoManager.getInstance().getDaoSession().getBookDao();
         List<Book> list = bookDao.queryBuilder().list();
         if (list != null) {

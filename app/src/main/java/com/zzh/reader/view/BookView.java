@@ -25,7 +25,7 @@ import com.zzh.zlibs.utils.ZUtils;
  * Created by jayce on 15-2-3.
  */
 public class BookView extends ImageView implements Animation.AnimationListener {
-    private boolean mIsOpen;
+    public boolean mIsOpen;
     private WindowManager mWindowManager;
     private AbsoluteLayout wmRootView;
     private PopupWindow pop;
