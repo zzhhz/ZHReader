@@ -37,5 +37,8 @@ public class Constants {
 
     public static final String URL_MY_BLOG = "http://zzhhz.blog.51cto.com";
     public static final String URL_MY_GITHUB="https://github.com/zzhhz";
+    public static final String AD_SPLASH_ID = "7040811988666883";
+    public static final String AD_APP_ID = "1106000566";
+
 
 }

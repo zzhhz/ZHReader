@@ -9,12 +9,19 @@ import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.qq.e.ads.splash.SplashAD;
+import com.qq.e.ads.splash.SplashADListener;
+import com.zzh.reader.Constants;
 import com.zzh.reader.R;
 import com.zzh.reader.base.BaseReaderActivity;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by ZZH on 17/1/23
@@ -25,9 +32,14 @@ import com.zzh.reader.base.BaseReaderActivity;
  * @Author: zzh
  * @Description: 启动页面
  */
-public class WelcomeActivity extends BaseReaderActivity {
-    private static int SPLASH_DURATION = 1500;
-    private ImageView welcomeImageView;
+public class WelcomeActivity extends BaseReaderActivity implements SplashADListener{
+    private static int SPLASH_DURATION = 3000;
+
+    private ImageView welcomeImageView;//
+
+    private SplashAD mSplashAD;//广告位
+    @BindView(R.id.splash_container)
+    public FrameLayout mADLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +50,6 @@ public class WelcomeActivity extends BaseReaderActivity {
             //透明导航栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-        welcomeImageView = (ImageView) findViewById(R.id.wecome_img);
-        Glide.with(this).load(R.mipmap.ic_splash).crossFade(SPLASH_DURATION)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(welcomeImageView);
-        startAppDelay();
     }
 
     @Override
@@ -53,12 +60,17 @@ public class WelcomeActivity extends BaseReaderActivity {
 
     @Override
     protected void initView() {
-
+        ButterKnife.bind(this);
+        welcomeImageView = (ImageView) findViewById(R.id.wecome_img);
+        Glide.with(this).load(R.mipmap.ic_splash).crossFade(1000)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(welcomeImageView);
+        startAppDelay();
     }
 
     @Override
     protected void initData() {
-
+        mSplashAD = new SplashAD(this, mADLayout, Constants.AD_APP_ID, Constants.AD_SPLASH_ID,this);
     }
 
     @Override
@@ -111,5 +123,30 @@ public class WelcomeActivity extends BaseReaderActivity {
                 bitmap.recycle();
             }
         }
+    }
+
+    @Override
+    public void onADDismissed() {
+
+    }
+
+    @Override
+    public void onNoAD(int i) {
+
+    }
+
+    @Override
+    public void onADPresent() {
+
+    }
+
+    @Override
+    public void onADClicked() {
+
+    }
+
+    @Override
+    public void onADTick(long l) {
+
     }
 }
