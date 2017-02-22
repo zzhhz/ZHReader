@@ -3,7 +3,9 @@ package com.zzh.reader.adapter;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -63,6 +65,9 @@ public class BookGridAdapter extends RecyclerView.Adapter<CommonViewHolder> impl
 
     public BookGridAdapter() {
         this.dataList = new ArrayList<>();
+        Book book = new Book();
+        book.setBookId(new Long(-1));
+        this.dataList.add(book);
     }
 
     /**
@@ -87,7 +92,7 @@ public class BookGridAdapter extends RecyclerView.Adapter<CommonViewHolder> impl
     }
 
     public void addAllBook(List<Book> list) {
-        this.dataList.addAll(list);
+        this.dataList.addAll(0, list);
     }
 
     @Override
@@ -118,48 +123,64 @@ public class BookGridAdapter extends RecyclerView.Adapter<CommonViewHolder> impl
     }
 
     private void onBindHolder(final BookViewHolder holder, final int position) {
-        final Book book = dataList.get(position);
-        holder.bookName.setText(book.getBookName());
-        if (isShowDeleteButton) {
-            holder.delete.setVisibility(View.VISIBLE);
+        if (dataList.get(position).getBookId() == -1) {
+            holder.bookView.setImageResource(R.mipmap.ic_add_cover);
+            holder.bookName.setText("");
+            holder.bookView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return true;
+                }
+            });
         } else {
-            holder.delete.setVisibility(View.GONE);
+            final Book book = dataList.get(position);
+            holder.bookName.setText(book.getBookName());
+            holder.bookView.setImageResource(R.drawable.cover_default_new);
+            if (isShowDeleteButton) {
+                holder.delete.setVisibility(View.VISIBLE);
+            } else {
+                holder.delete.setVisibility(View.GONE);
+            }
+
+            holder.bookView.setListener(new BookView.OnAnimationListener() {
+                @Override
+                public void onAnimationOpenEnd(BookView bookView) {
+                    if (mClickListener != null) {
+                        mClickListener.onClickOpenBook(holder.bookView, book);
+                    }
+                }
+
+                @Override
+                public void onAnimationCloseEnd(BookView bookView) {
+                    if (mClickListener != null) {
+                        mClickListener.onClickCloseBook(holder.bookView, book);
+                    }
+                }
+            });
+
+            holder.delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mClickListener != null) {
+                        mClickListener.onClickDeleteBook(position, book);
+                    }
+                }
+            });
+
+            holder.bookView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (mClickListener != null) {
+                        mClickListener.onLongClickBook(holder, book);
+                    }
+                    return false;
+                }
+            });
         }
+    }
 
-        holder.bookView.setListener(new BookView.OnAnimationListener() {
-            @Override
-            public void onAnimationOpenEnd(BookView bookView) {
-                if (mClickListener != null) {
-                    mClickListener.onClickOpenBook(holder.bookView, book);
-                }
-            }
-
-            @Override
-            public void onAnimationCloseEnd(BookView bookView) {
-                if (mClickListener != null) {
-                    mClickListener.onClickCloseBook(holder.bookView, book);
-                }
-            }
-        });
-
-        holder.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mClickListener != null) {
-                    mClickListener.onClickDeleteBook(position, book);
-                }
-            }
-        });
-
-        holder.bookView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (mClickListener != null) {
-                    mClickListener.onLongClickBook(holder, book);
-                }
-                return false;
-            }
-        });
+    private boolean isLastPosition(int position) {
+        return (getRealItemCount()) == (position );
     }
 
     @Override
@@ -182,7 +203,11 @@ public class BookGridAdapter extends RecyclerView.Adapter<CommonViewHolder> impl
     }
 
     private boolean isFooterViewPos(int position) {
-        return position >= getHeaderCount() + getRealItemCount();
+        if (getFooterCount() == 0){
+            return false;
+        } else {
+            return position >= getHeaderCount() + getRealItemCount();
+        }
     }
 
     public int getHeaderCount() {
