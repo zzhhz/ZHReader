@@ -2,15 +2,6 @@ package com.zzh.reader.adapter.holder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.zzh.reader.R;
-import com.zzh.reader.view.BookView;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * ----------Dragon be here!----------/
@@ -32,25 +23,17 @@ import butterknife.ButterKnife;
  * 　　　　　┃┫┫　┃┫┫
  * 　　　　　┗┻┛　┗┻┛
  * ━━━━━━神兽出没━永无BUG━━━━━
- * Created by Administrator on 2017/2/21.
+ * Created by Administrator on 2017/2/22.
  *
- * @Date: 2017/2/21
+ * @Date: 2017/2/22
  * @Email: zzh_hz@126.com
  * @QQ: 1299234582
  * @Author: zzh
- * @Description: 主页书籍使用
+ * @Description: ZHReader
  */
 
-public class BookViewHolder extends CommonViewHolder {
-    @BindView(R.id.item_close_Im)
-    public ImageButton delete;
-    @BindView(R.id.bookName)
-    public TextView bookName;
-    @BindView(R.id.bookCover)
-    public BookView bookView;
-
-    public BookViewHolder(View itemView) {
+public class CommonViewHolder extends RecyclerView.ViewHolder {
+    public CommonViewHolder(View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
     }
 }

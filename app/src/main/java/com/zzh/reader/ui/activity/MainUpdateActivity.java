@@ -12,6 +12,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,6 +80,7 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
     //
     private ItemTouchHelper itemTouchHelper;
     private boolean isExit = false;
+    private View mHeaderView;
 
     @Override
     protected int setLayoutId() {
@@ -95,6 +97,8 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
 
             }
         });
+
+        mHeaderView = LayoutInflater.from(mContext).inflate(R.layout.item_header_view_ad_grid_book, null);
         initNavigationView();
     }
 
@@ -139,8 +143,8 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
         mBookGrid.setHasFixedSize(true);
         mBookGrid.setLayoutManager(manager);
         mBookGrid.setAdapter(mAdapter);
+        mAdapter.addHeaderView(mHeaderView);
         DividerGridItemDecoration itemDecoration = new DividerGridItemDecoration(mContext);
-        //itemDecoration.setHorizontalDivider(getResources().getDrawable(R.drawable.bookshelf_dock));
         mBookGrid.addItemDecoration(itemDecoration);
         itemTouchHelper = new ItemTouchHelper(new DragItemTouchCallback(mAdapter).setOnDragListener(this));
         itemTouchHelper.attachToRecyclerView(mBookGrid);
@@ -149,7 +153,6 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
         if (list != null) {
             mAdapter.addAllBook(list);
         }
-
     }
 
     @Override
@@ -308,9 +311,15 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
 
     @Override
     public void onLongClickBook(RecyclerView.ViewHolder vh, Book book) {
-        mAdapter.setShowDeleteButton(true);
-        itemTouchHelper.startDrag(vh);
-        VibratorUtil.Vibrate((Activity) mContext, 50);   //震动70ms
+        if (mAdapter.getItemCount() == mAdapter.getRealItemCount()) {
+            mAdapter.setShowDeleteButton(true);
+            itemTouchHelper.startDrag(vh);
+            VibratorUtil.Vibrate((Activity) mContext, 50);   //震动50ms
+        } else {
+            mAdapter.removeAllFooterView();
+            mAdapter.removeAllHeaderView();
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

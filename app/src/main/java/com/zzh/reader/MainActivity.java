@@ -42,8 +42,10 @@ import butterknife.ButterKnife;
  * @Email: zzh_hz@126.com
  * @QQ: 1299234582
  * @Author: zzh
+ * @since 1.0.0 这个版本之后不再使用。换成RecyclerView
  * @Description: 书籍表格页
  */
+@Deprecated
 public class MainActivity extends BaseReaderNoSwipeActivity implements SelfAdapter.OnClickBook{
 
     @BindView(R.id.bookShelf)
