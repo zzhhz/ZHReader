@@ -212,8 +212,8 @@ public class BookPageFactory {
     public String getCharsetCode(File file) {
         String code = "US-ASCII";
         if (file != null && file.exists()) {
-            try {
             FileInputStream input = null;
+            try {
 
                 input = new FileInputStream(file);
 
@@ -240,6 +240,15 @@ public class BookPageFactory {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            }finally {
+                if (input != null)
+                {
+                    try {
+                        input.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         return code;
