@@ -22,6 +22,8 @@ import com.zzh.reader.model.Catalogue;
 import com.zzh.reader.ui.activity.ReadActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -50,7 +52,7 @@ public class BookPageFactory {
     private File book_file = null;
     private int m_backColor = 0xffff9e85; // 背景颜色
     private Bitmap m_book_bg = null;
-    private int m_fontSize ;
+    private int m_fontSize;
     private int lineSpace = 5;
     private boolean m_isfirstPage, m_islastPage;
     private Vector<String> m_lines = new Vector<String>();
@@ -67,28 +69,28 @@ public class BookPageFactory {
     private int mstartpos = 0;
     private int m_textColor = Color.rgb(50, 65, 78);
     //private static Typeface typeface;
-    private int marginHeight ; // 上下与边缘的距离
-    private int marginWidth ; // 左右与边缘的距离
+    private int marginHeight; // 上下与边缘的距离
+    private int marginWidth; // 左右与边缘的距离
     private int mHeight;
     private int mLineCount; // 每页可以显示的行数
     private Paint mPaint;
 
     private SimpleDateFormat sdf;
     private String date;
-    private DecimalFormat df ;
+    private DecimalFormat df;
 
     private float mVisibleHeight; // 绘制内容的宽
     private float mVisibleWidth; // 绘制内容的宽
     private int mWidth;
     private Intent batteryInfoIntent;
 
-    private Paint mBatterryPaint ;
+    private Paint mBatterryPaint;
     private float mBorderWidth;
     private float mBatteryPercentage;
     private RectF rect1 = new RectF();
     private RectF rect2 = new RectF();
 
-    public BookPageFactory(int w, int h,Context context) {
+    public BookPageFactory(int w, int h, Context context) {
         mWidth = w;
         mHeight = h;
         mcontext = context;
@@ -110,7 +112,7 @@ public class BookPageFactory {
         mVisibleHeight = mHeight - marginHeight * 2;
         mLineCount = (int) (mVisibleHeight / m_fontSize) - 1; // 可显示的行数,-1是因为底部显示进度的位置容易被遮住
         batteryInfoIntent = context.getApplicationContext().registerReceiver(null,
-                new IntentFilter(Intent.ACTION_BATTERY_CHANGED)) ;//注册广播,随时获取到电池电量信息
+                new IntentFilter(Intent.ACTION_BATTERY_CHANGED));//注册广播,随时获取到电池电量信息
 
         mBatterryPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBatterryPaint.setTextSize(CommonUtil.sp2px(context, 12));
@@ -124,15 +126,15 @@ public class BookPageFactory {
         word = new StringBuilder();
         int size = getM_fontSize();
         mPaint.setTextSize(size);
-       // mLineCount =  (int) (mVisibleHeight / size) - 1;
+        // mLineCount =  (int) (mVisibleHeight / size) - 1;
         mPaint.setColor(m_textColor);
         if (m_lines.size() == 0)
             m_lines = pageDown();
         if (m_lines.size() > 0) {
             if (m_book_bg == null)
-               c.drawColor(m_backColor);
+                c.drawColor(m_backColor);
             else
-               c.drawBitmap(m_book_bg, 0, 0, null);
+                c.drawBitmap(m_book_bg, 0, 0, null);
 
             int y = marginHeight;
             for (String strLine : m_lines) {
@@ -140,27 +142,27 @@ public class BookPageFactory {
                 c.drawText(strLine, marginWidth, y, mPaint);
                 word.append(strLine);
             }
-            ReadActivity.words=word.toString();
-            word=null;
+            ReadActivity.words = word.toString();
+            word = null;
         }
         //画进度及时间
-        int dateWith = (int) (mBatterryPaint.measureText(date)+mBorderWidth);
+        int dateWith = (int) (mBatterryPaint.measureText(date) + mBorderWidth);
         float fPercent = (float) (m_mbBufBegin * 1.0 / m_mbBufLen);
         String strPercent = df.format(fPercent * 100) + "%";
         int nPercentWidth = (int) mBatterryPaint.measureText("999.9%") + 1;  //Paint.measureText直接返回參數字串所佔用的寬度
         c.drawText(strPercent, mWidth - nPercentWidth, mHeight - 10, mBatterryPaint);//x y为坐标值
-        c.drawText(date, marginWidth ,mHeight-10, mBatterryPaint);
+        c.drawText(date, marginWidth, mHeight - 10, mBatterryPaint);
 
         // 画电池
-        int level = batteryInfoIntent.getIntExtra( "level" , 0 );
+        int level = batteryInfoIntent.getIntExtra("level", 0);
         int scale = batteryInfoIntent.getIntExtra("scale", 100);
         mBatteryPercentage = (float) level / scale;
-        int rect1Left = marginWidth+dateWith;//电池外框left位置
+        int rect1Left = marginWidth + dateWith;//电池外框left位置
 
         //画电池外框
-        float width = CommonUtil.convertDpToPixel(mcontext,20) - mBorderWidth;
-        float height = CommonUtil.convertDpToPixel(mcontext,10);
-        rect1.set(rect1Left, mHeight-height-10,rect1Left + width, mHeight - 10);
+        float width = CommonUtil.convertDpToPixel(mcontext, 20) - mBorderWidth;
+        float height = CommonUtil.convertDpToPixel(mcontext, 10);
+        rect1.set(rect1Left, mHeight - height - 10, rect1Left + width, mHeight - 10);
         rect2.set(rect1Left + mBorderWidth, mHeight - height + mBorderWidth - 10, rect1Left + width - mBorderWidth, mHeight - mBorderWidth - 10);
         c.save(Canvas.CLIP_SAVE_FLAG);
         c.clipRect(rect2, Region.Op.DIFFERENCE);
@@ -174,27 +176,25 @@ public class BookPageFactory {
         rect2.bottom -= mBorderWidth;
         c.drawRect(rect2, mBatterryPaint);
         //画电池头
-        int poleHeight = (int) CommonUtil.convertDpToPixel(mcontext,10) / 2;
+        int poleHeight = (int) CommonUtil.convertDpToPixel(mcontext, 10) / 2;
         rect2.left = rect1.right;
         rect2.top = rect2.top + poleHeight / 4;
         rect2.right = rect1.right + mBorderWidth;
-        rect2.bottom = rect2.bottom - poleHeight/4;
+        rect2.bottom = rect2.bottom - poleHeight / 4;
         c.drawRect(rect2, mBatterryPaint);
 
     }
 
     /**
-     *
      * @param strFilePath
-     * @param begin
-     *            表示书签记录的位置，读取书签时，将begin值给m_mbBufEnd，在读取nextpage，及成功读取到了书签
-     *            记录时将m_mbBufBegin开始位置作为书签记录
-     *
+     * @param begin       表示书签记录的位置，读取书签时，将begin值给m_mbBufEnd，在读取nextpage，及成功读取到了书签
+     *                    记录时将m_mbBufBegin开始位置作为书签记录
      * @throws IOException
      */
     @SuppressWarnings("resource")
     public void openbook(String strFilePath, int begin) throws IOException {
         book_file = new File(strFilePath);
+        m_strCharsetName = getCharsetCode(book_file);
         long lLen = book_file.length();
         m_mbBufLen = (int) lLen;
         m_mbBuf = new RandomAccessFile(book_file, "r").getChannel().map(
@@ -206,7 +206,43 @@ public class BookPageFactory {
             m_mbBufEnd = begin;
         } else {
         }
-       // getBookInfo();
+        // getBookInfo();
+    }
+
+    public String getCharsetCode(File file) {
+        String code = "US-ASCII";
+        if (file != null && file.exists()) {
+            try {
+            FileInputStream input = null;
+
+                input = new FileInputStream(file);
+
+                int pre = (input.read() << 8) + input.read();
+
+                switch (pre) {
+                    case 0xefbb:
+                        if (input.read() == 0xbf) {
+                            code = "UTF-8";
+                        }
+                        break;
+                    case 0xfffe:
+                        code = "Unicode";
+                        break;
+                    case 0xfeff:
+                        code = "UTF-16BE";
+                        break;
+                    default:
+                        code = "GBK";   // "US-ASCII"
+                        break;
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return code;
     }
 
     /**
@@ -231,7 +267,7 @@ public class BookPageFactory {
             // 替换掉回车换行符,防止段落发生错乱
             if (strParagraph.indexOf("\r\n") != -1) {   //windows
                 strReturn = "\r\n";
-                strParagraph = strParagraph.replaceAll("\r\n","");
+                strParagraph = strParagraph.replaceAll("\r\n", "");
             } else if (strParagraph.indexOf("\n") != -1) {    //linux
                 strReturn = "\n";
                 strParagraph = strParagraph.replaceAll("\n", "");
@@ -268,11 +304,11 @@ public class BookPageFactory {
     }
 
     /**
-    *   提取章节目录及值
+     * 提取章节目录及值
      */
     public void getBookInfo() {
         String strParagraph = "";
-        while (mstartpos < m_mbBufLen-1) {
+        while (mstartpos < m_mbBufLen - 1) {
             byte[] paraBuf = readParagraphForward(mstartpos);
             mstartpos += paraBuf.length;// 每次读取后，记录结束点位置，该位置是段落结束位置
             try {
@@ -291,8 +327,8 @@ public class BookPageFactory {
                 strParagraph = strParagraph.replaceAll("\n", "");
             }
 
-            if(strParagraph.contains("第") && strParagraph.contains("章")) {
-                int m_mstartpos = mstartpos-paraBuf.length;//获得章节段落开始位置
+            if (strParagraph.contains("第") && strParagraph.contains("章")) {
+                int m_mstartpos = mstartpos - paraBuf.length;//获得章节段落开始位置
                 strParagraph = strParagraph.trim();//去除字符串前后空格
                 //去除全角空格
                 while (strParagraph.startsWith("　")) {
@@ -303,14 +339,15 @@ public class BookPageFactory {
             }
         }
     }
+
     /**
-     *   提取章节目录及值
+     * 提取章节目录及值
      */
-    public List<Catalogue> getBookInfo(String bookPath) throws Exception{
+    public List<Catalogue> getBookInfo(String bookPath) throws Exception {
         List<Catalogue> list = new ArrayList<>();
         CatalogueDao catalogueDao = GreenDaoManager.getInstance().getDaoSession().getCatalogueDao();
         String strParagraph = "";
-        while (mstartpos < m_mbBufLen-1) {
+        while (mstartpos < m_mbBufLen - 1) {
             byte[] paraBuf = readParagraphForward(mstartpos);
             mstartpos += paraBuf.length;// 每次读取后，记录结束点位置，该位置是段落结束位置
             try {
@@ -329,8 +366,8 @@ public class BookPageFactory {
                 strParagraph = strParagraph.replaceAll("\n", "");
             }
 
-            if(strParagraph.contains("第") && strParagraph.contains("章")) {
-                int m_mstartpos = mstartpos-paraBuf.length;//获得章节段落开始位置
+            if (strParagraph.contains("第") && strParagraph.contains("章")) {
+                int m_mstartpos = mstartpos - paraBuf.length;//获得章节段落开始位置
                 strParagraph = strParagraph.trim();//去除字符串前后空格
                 //去除全角空格
                 while (strParagraph.startsWith("　")) {
@@ -338,13 +375,14 @@ public class BookPageFactory {
                 }
                 bookCatalogue.add(strParagraph);   //保存到数组
                 bookCatalogueStartPos.add(m_mstartpos);
-                Catalogue catalogue = new Catalogue(null,m_mstartpos, strParagraph,bookPath);
+                Catalogue catalogue = new Catalogue(null, m_mstartpos, strParagraph, bookPath);
                 catalogueDao.insert(catalogue);
-                Log.d(TAG, "getBookInfo:------ "+catalogue);
+                Log.d(TAG, "getBookInfo:------ " + catalogue);
             }
         }
         return list;
     }
+
     /**
      * 得到上上页的结束位置
      */
@@ -381,8 +419,8 @@ public class BookPageFactory {
             lines.addAll(0, paraLines);
             lines.add("\n\n");
 
-            if(lines.size() > mLineCount) {
-              //  break;
+            if (lines.size() > mLineCount) {
+                //  break;
             }
         }
 
@@ -544,7 +582,7 @@ public class BookPageFactory {
         String fullfilepath = null;
         try {
             File path = new File(Environment.getExternalStorageDirectory()
-                    +"");
+                    + "");
             path.mkdirs();
             File file = new File(path, filename);
             fullfilepath = file.getAbsolutePath();
@@ -569,15 +607,15 @@ public class BookPageFactory {
 
         if (height > reqHeight || width > reqWidth) {
 
-         /**   final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
+            /**   final int halfHeight = height / 2;
+             final int halfWidth = width / 2;
 
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            } */
+             // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+             // height and width larger than the requested height and width.
+             while ((halfHeight / inSampleSize) > reqHeight
+             && (halfWidth / inSampleSize) > reqWidth) {
+             inSampleSize *= 2;
+             } */
             final int heightRatio = Math.round((float) height / (float) reqHeight);
             final int widthRatio = Math.round((float) width / (float) reqWidth);
             // 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
@@ -605,7 +643,7 @@ public class BookPageFactory {
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
-    public static Bitmap getResizedBitmap(int reqWidth, int reqHeight,  String imagePath) {
+    public static Bitmap getResizedBitmap(int reqWidth, int reqHeight, String imagePath) {
 
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -616,13 +654,13 @@ public class BookPageFactory {
         int photoH = bmOptions.outHeight;
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/reqWidth, photoH/reqHeight);
-      //  bmOptions.inSampleSize = calculateInSampleSize(bmOptions, reqWidth, reqHeight);
+        int scaleFactor = Math.min(photoW / reqWidth, photoH / reqHeight);
+        //  bmOptions.inSampleSize = calculateInSampleSize(bmOptions, reqWidth, reqHeight);
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
 
-        return(BitmapFactory.decodeFile(imagePath, bmOptions).copy(Bitmap.Config.ARGB_4444, true));
+        return (BitmapFactory.decodeFile(imagePath, bmOptions).copy(Bitmap.Config.ARGB_4444, true));
     }
 
 
@@ -634,9 +672,11 @@ public class BookPageFactory {
         this.m_fontSize = m_fontSize;
         mLineCount = (int) (mVisibleHeight / m_fontSize) - 1;
     }
+
     public int getM_fontSize() {
         return this.m_fontSize; //2016.1.4
     }
+
     // 设置页面起始点
     public void setM_mbBufBegin(int m_mbBufBegin) {
         this.m_mbBufBegin = m_mbBufBegin;
@@ -652,7 +692,7 @@ public class BookPageFactory {
     }
 
     public String getFirstTwoLineText() {
-        return m_lines.size() > 0 ? m_lines.get(0)+m_lines.get(1) : "";
+        return m_lines.size() > 0 ? m_lines.get(0) + m_lines.get(1) : "";
 
     }
 

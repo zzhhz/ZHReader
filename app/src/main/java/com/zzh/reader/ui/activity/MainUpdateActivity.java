@@ -94,7 +94,9 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
         toolbars("天问", R.drawable.ic_menu_white_24dp, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (drawerLayout != null){
+                    drawerLayout.openDrawer(navigationView);
+                }
             }
         });
 
