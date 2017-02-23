@@ -3,7 +3,6 @@ package com.zzh.reader.adapter;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -179,10 +178,6 @@ public class BookGridAdapter extends RecyclerView.Adapter<CommonViewHolder> impl
         }
     }
 
-    private boolean isLastPosition(int position) {
-        return (getRealItemCount()) == (position );
-    }
-
     @Override
     public int getItemCount() {
         return getHeaderCount() + getRealItemCount() + getFooterCount();
@@ -282,7 +277,10 @@ public class BookGridAdapter extends RecyclerView.Adapter<CommonViewHolder> impl
     }
 
     public void clear() {
+        Book book = dataList.get(dataList.size() - 1);
         dataList.clear();
+        dataList.add(book);
+
     }
 
     public Book getItemObject(int position) {
