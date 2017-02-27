@@ -5,7 +5,6 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 /**
- * Created by jayce on 15-2-4.
  */
 //public class ContentScaleAnimation extends Animation {
 //    private final float mFromX;

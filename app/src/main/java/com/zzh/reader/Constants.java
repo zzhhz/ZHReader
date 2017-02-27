@@ -26,7 +26,7 @@ package com.zzh.reader;
  * @Email: zzh_hz@126.com
  * @QQ: 1299234582
  * @Author: zzh
- * @Description:
+ * @Description: 保存常量
  */
 
 public class Constants {

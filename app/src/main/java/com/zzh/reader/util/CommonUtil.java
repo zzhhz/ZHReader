@@ -11,7 +11,13 @@ import android.view.WindowManager;
 import java.lang.reflect.Method;
 
 /**
- * Created by Administrator on 2016/1/17.
+ * Created by ZZH on 17/2/16
+ *
+ * @Date: 17/2/16 10:59
+ * @Email: zzh_hz@126.com
+ * @QQ: 1299234582
+ * @Author: zzh
+ * @Description:
  */
 public class CommonUtil {
     /**

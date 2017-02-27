@@ -22,7 +22,6 @@ import com.zzh.zlibs.utils.ZUtils;
  * cover播放放大翻转动画  content播放放大动画
  * 再次点击，播放关闭书本动画
  * <p>
- * Created by jayce on 15-2-3.
  */
 public class BookView extends ImageView implements Animation.AnimationListener {
     public boolean mIsOpen;

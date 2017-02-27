@@ -6,8 +6,6 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 /**
- * @author jayce
- * @date 2015/2/3
  */
 public class Rotate3DAnimation extends Animation {
     private Camera mCamera;
