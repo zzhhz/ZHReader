@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.tencent.stat.StatService;
 import com.zzh.reader.Constants;
 import com.zzh.reader.R;
 import com.zzh.reader.activity.FileActivity;
@@ -89,12 +90,13 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
 
     @Override
     protected void initView() {
+        StatService.commitEvents(mContext, Constants.PAGE_MAIN);
         ButterKnife.bind(this);
         setToolbar(R.id.toolbar);
         toolbars("天问", R.drawable.ic_menu_white_24dp, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (drawerLayout != null){
+                if (drawerLayout != null) {
                     drawerLayout.openDrawer(navigationView);
                 }
             }

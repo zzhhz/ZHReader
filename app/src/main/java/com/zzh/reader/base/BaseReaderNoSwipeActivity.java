@@ -3,6 +3,7 @@ package com.zzh.reader.base;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.tencent.stat.StatService;
 import com.zzh.zlibs.base.BaseNoSwipeBackActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,6 +46,18 @@ public abstract class BaseReaderNoSwipeActivity extends BaseNoSwipeBackActivity 
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        StatService.onResume(mContext);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        StatService.onPause(mContext);
     }
 
 

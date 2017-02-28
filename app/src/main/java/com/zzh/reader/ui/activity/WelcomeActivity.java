@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qq.e.ads.splash.SplashAD;
 import com.qq.e.ads.splash.SplashADListener;
+import com.tencent.stat.StatService;
 import com.zzh.reader.Constants;
 import com.zzh.reader.R;
 import com.zzh.reader.base.BaseReaderActivity;
@@ -65,6 +66,7 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
         Glide.with(this).load(R.mipmap.ic_splash).crossFade(1000)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(welcomeImageView);
+        StatService.commitEvents(mContext, Constants.PAGE_SPLASH);
         startAppDelay();
     }
 

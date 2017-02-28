@@ -39,6 +39,10 @@ public class Constants {
     public static final String URL_MY_GITHUB="https://github.com/zzhhz";
     public static final String AD_SPLASH_ID = "7040811988666883";
     public static final String AD_APP_ID = "1106000566";
+    public static final int PAGE_SPLASH = 1;
+    public static final int PAGE_MAIN = 2;
+    public static final int PAGE_FILE_LIST = 3;
+
 
 
 }
