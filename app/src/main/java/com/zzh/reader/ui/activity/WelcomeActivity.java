@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qq.e.ads.splash.SplashAD;
 import com.qq.e.ads.splash.SplashADListener;
 import com.tencent.stat.StatService;
+import com.tencent.stat.common.StatConstants;
 import com.zzh.reader.Constants;
 import com.zzh.reader.R;
 import com.zzh.reader.base.BaseReaderActivity;
@@ -61,6 +62,7 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
 
     @Override
     protected void initView() {
+        StatService.startStatService(mContext, Constants.TA_APP_KEY, StatConstants.VERSION);
         ButterKnife.bind(this);
         welcomeImageView = (ImageView) findViewById(R.id.wecome_img);
         Glide.with(this).load(R.mipmap.ic_splash).crossFade(1000)

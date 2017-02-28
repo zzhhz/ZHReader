@@ -44,5 +44,5 @@ public class Constants {
     public static final int PAGE_FILE_LIST = 3;
 
 
-
+    public static final String TA_APP_KEY = "Aqc1106000566";
 }
