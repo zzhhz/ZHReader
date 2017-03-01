@@ -17,6 +17,7 @@
             android:id="@+id/nav_ver"
             android:checkable="true"
             android:icon="@drawable/ic_dashboard_black_36dp"
+            android:visible="false"
             android:title="版本信息" />
 
         <item
@@ -35,6 +36,7 @@
                 android:id="@+id/sub_switch"
                 android:checkable="true"
                 android:icon="@drawable/ic_settings_applications_black_36dp"
+                android:visible="false"
                 android:title="切换主题" />
 
             <item

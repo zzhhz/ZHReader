@@ -1,56 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/top_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentTop="true"
-    android:layout_centerHorizontal="true"
-    android:gravity="bottom">
+    android:orientation="vertical"
+    android:background="@drawable/hend_background">
 
-    <ImageView
-        android:id="@+id/bg_img"
+    <RelativeLayout
+        android:id="@+id/ad_content"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+    </RelativeLayout>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/hend_background" />
+        android:gravity="bottom"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true">
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/user_avatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_above="@+id/user_name"
+            android:layout_alignLeft="@+id/user_name"
+            android:layout_alignStart="@+id/user_name"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_noavatar"
+            app:riv_border_color="@color/white"
+            app:riv_border_width="2dp"
+            app:riv_corner_radius="24dp"
+            app:riv_mutate_background="true"
+            app:riv_oval="true" />
 
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/user_avatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_above="@+id/user_name"
-        android:layout_alignLeft="@+id/user_name"
-        android:layout_alignStart="@+id/user_name"
-        android:layout_marginBottom="8dp"
-        android:clickable="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_noavatar"
-        app:riv_border_color="@color/white"
-        app:riv_border_width="2dp"
-        app:riv_corner_radius="24dp"
-        app:riv_mutate_background="true"
-        app:riv_oval="true" />
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:clickable="true"
+            android:shadowColor="#000"
+            android:shadowDx="3.0"
+            android:shadowDy="3.0"
+            android:shadowRadius="2.0"
+            android:text="未登录"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/bg_img"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="12dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:clickable="true"
-        android:shadowColor="#000"
-        android:shadowDx="3.0"
-        android:shadowDy="3.0"
-        android:shadowRadius="2.0"
-        android:text="未登录"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
 
-</RelativeLayout>
+</LinearLayout>

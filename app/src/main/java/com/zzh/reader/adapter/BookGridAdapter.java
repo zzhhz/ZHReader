@@ -64,9 +64,6 @@ public class BookGridAdapter extends RecyclerView.Adapter<CommonViewHolder> impl
 
     public BookGridAdapter() {
         this.dataList = new ArrayList<>();
-        Book book = new Book();
-        book.setBookId(new Long(-1));
-        this.dataList.add(book);
     }
 
     /**
@@ -277,14 +274,7 @@ public class BookGridAdapter extends RecyclerView.Adapter<CommonViewHolder> impl
     }
 
     public void clear() {
-        Book book = dataList.get(dataList.size() - 1);
         dataList.clear();
-        dataList.add(book);
-
-    }
-
-    public Book getItemObject(int position) {
-        return dataList.get(position);
     }
 
     public boolean isShowDeleteButton() {

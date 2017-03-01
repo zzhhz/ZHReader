@@ -10,14 +10,21 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.qq.e.ads.banner.ADSize;
+import com.qq.e.ads.banner.BannerADListener;
+import com.qq.e.ads.banner.BannerView;
+import com.qq.e.ads.interstitial.InterstitialAD;
+import com.qq.e.ads.interstitial.InterstitialADListener;
 import com.tencent.stat.StatService;
 import com.zzh.reader.Constants;
 import com.zzh.reader.R;
@@ -81,8 +88,9 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
     //
     private ItemTouchHelper itemTouchHelper;
     private boolean isExit = false;
-    private View mHeaderView;
-
+    private ViewGroup mHeaderView;
+    BannerView mBannerView ;
+     InterstitialAD iad;
     @Override
     protected int setLayoutId() {
         return R.layout.activity_main_update;
@@ -102,8 +110,103 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
             }
         });
 
-        mHeaderView = LayoutInflater.from(mContext).inflate(R.layout.item_header_view_ad_grid_book, null);
+        mHeaderView = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.item_header_view_ad_grid_book, null);
+        mBannerView = new BannerView(this, ADSize.BANNER, Constants.AD_APP_ID, Constants.AD_BANNER_ID);
+        mBannerView.setRefresh(100);
+        mBannerView.setADListener(new BannerADListener() {
+            @Override
+            public void onNoAD(int i) {
+
+                Log.d(TAG, "onNoAD: -------   "+i);
+            }
+
+            @Override
+            public void onADReceiv() {
+                Log.d(TAG, "onADReceiv: ");
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onADExposure() {
+                Log.d(TAG, "onADExposure: ");
+            }
+
+            @Override
+            public void onADClosed() {
+                Log.d(TAG, "onADClosed: ");
+            }
+
+            @Override
+            public void onADClicked() {
+                Log.d(TAG, "onADClicked: ");
+            }
+
+            @Override
+            public void onADLeftApplication() {
+                Log.d(TAG, "onADLeftApplication: ");
+            }
+
+            @Override
+            public void onADOpenOverlay() {
+                Log.d(TAG, "onADOpenOverlay: ");
+            }
+
+            @Override
+            public void onADCloseOverlay() {
+
+                Log.d(TAG, "onADCloseOverlay: ");
+            }
+        });
+        mBannerView.setShowClose(true);
+        mBannerView.loadAD();
+        mHeaderView.addView(mBannerView);
         initNavigationView();
+        iad = new InterstitialAD(this, Constants.AD_APP_ID, Constants.AD_CHA_PING_ID);
+        //iad.setAdListener();
+        iad.setADListener(new InterstitialADListener() {
+            @Override
+            public void onADReceive() {
+                iad.showAsPopupWindow((Activity) mContext);
+            }
+
+            @Override
+            public void onNoAD(int i) {
+
+            }
+
+            @Override
+            public void onADOpened() {
+
+            }
+
+            @Override
+            public void onADExposure() {
+
+            }
+
+            @Override
+            public void onADClicked() {
+
+            }
+
+            @Override
+            public void onADLeftApplication() {
+
+            }
+
+            @Override
+            public void onADClosed() {
+
+            }
+        });
+//请求插屏广告，每次重新请求都可以调用此方法。
+//        iad.loadAd();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        iad.loadAD();
     }
 
     /**
@@ -163,6 +266,7 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
     protected void initSetListener() {
         findViewById(R.id.fab).setOnClickListener(this);
         mAdapter.setOnClickListener(this);
+
     }
 
     @Override
