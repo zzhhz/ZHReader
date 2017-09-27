@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -33,7 +34,7 @@ import butterknife.ButterKnife;
  * @Author: zzh
  * @Description: 启动页面
  */
-public class WelcomeActivity extends BaseReaderActivity implements SplashADListener{
+public class WelcomeActivity extends BaseReaderActivity implements SplashADListener {
     private static int SPLASH_DURATION = 3000;
 
     private ImageView welcomeImageView;//
@@ -66,12 +67,12 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
         Glide.with(this).load(R.mipmap.ic_splash).crossFade(1000)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(welcomeImageView);
-        startAppDelay();
+        requestReadStoragePermission();
     }
 
     @Override
     protected void initData() {
-        mSplashAD = new SplashAD(this, mADLayout, Constants.AD_APP_ID, Constants.AD_SPLASH_ID,this);
+        mSplashAD = new SplashAD(this, mADLayout, Constants.AD_APP_ID, Constants.AD_SPLASH_ID, this);
     }
 
     @Override
@@ -133,6 +134,7 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
 
     @Override
     public void onNoAD(AdError adError) {
+        Log.d(TAG, "onNoAD: " + adError.getErrorMsg() + ",   " + adError.getErrorCode());
 
     }
 
@@ -149,5 +151,12 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
     @Override
     public void onADTick(long l) {
 
+    }
+
+    @Override
+    protected void notifyPermission(int code, boolean flag) {
+        if (code == REQUEST_CODE_READ_PERMISSION && flag) {
+            startAppDelay();
+        }
     }
 }
