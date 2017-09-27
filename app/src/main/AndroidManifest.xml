@@ -39,9 +39,6 @@
             android:name=".ui.activity.ReadActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.zzh.test.Test2Activity"
-            android:theme="@style/AppTheme" />
         <activity android:name=".activity.FileActivity" />
         <activity android:name=".ui.activity.WebActivity"></activity>
         <activity android:name=".ui.activity.MainUpdateActivity"
@@ -52,6 +49,13 @@
             android:name="TA_APPKEY" android:value="Aqc1106000566" />
         <meta-data
             android:name="InstallChannel" android:value="question_heaven" />
+        <meta-data
+            android:name="BUGLY_APPID"
+            android:value="6d9847c4da" />
+        <!-- 配置APP版本号 -->
+        <meta-data
+            android:name="BUGLY_ENABLE_DEBUG"
+            android:value="true" />
     </application>
 
 </manifest>

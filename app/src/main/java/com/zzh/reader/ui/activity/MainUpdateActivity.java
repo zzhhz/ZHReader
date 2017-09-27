@@ -25,7 +25,7 @@ import com.qq.e.ads.banner.BannerADListener;
 import com.qq.e.ads.banner.BannerView;
 import com.qq.e.ads.interstitial.InterstitialAD;
 import com.qq.e.ads.interstitial.InterstitialADListener;
-import com.tencent.stat.StatService;
+import com.qq.e.comm.util.AdError;
 import com.zzh.reader.Constants;
 import com.zzh.reader.R;
 import com.zzh.reader.activity.FileActivity;
@@ -98,7 +98,6 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
 
     @Override
     protected void initView() {
-        StatService.commitEvents(mContext, Constants.PAGE_MAIN);
         ButterKnife.bind(this);
         setToolbar(R.id.toolbar);
         toolbars("天问", R.drawable.ic_menu_white_24dp, new View.OnClickListener() {
@@ -114,10 +113,10 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
         mBannerView = new BannerView(this, ADSize.BANNER, Constants.AD_APP_ID, Constants.AD_BANNER_ID);
         mBannerView.setRefresh(100);
         mBannerView.setADListener(new BannerADListener() {
-            @Override
-            public void onNoAD(int i) {
 
-                Log.d(TAG, "onNoAD: -------   "+i);
+            @Override
+            public void onNoAD(AdError adError) {
+
             }
 
             @Override
@@ -170,7 +169,7 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
             }
 
             @Override
-            public void onNoAD(int i) {
+            public void onNoAD(AdError adError) {
 
             }
 

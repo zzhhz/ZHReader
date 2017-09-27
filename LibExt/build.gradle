@@ -33,5 +33,10 @@ dependencies {
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:design:25.0.1'
-    compile files('libs/GDTUnionSDK.TBS.4.9.542.min.jar')
+    compile 'com.tencent.bugly:crashreport:latest.release'
+    //其中lat
+    //est.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
+    compile 'com.tencent.bugly:nativecrashreport:latest.release'
+    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
+    compile files('libs/GDTUnionSDK.4.11.552.min.jar')
 }

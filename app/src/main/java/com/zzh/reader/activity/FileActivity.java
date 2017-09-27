@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tencent.stat.StatService;
 import com.zzh.reader.Constants;
 import com.zzh.reader.R;
 import com.zzh.reader.ui.activity.ReadActivity;
@@ -73,7 +72,6 @@ public class FileActivity extends BaseReaderActivity implements FileAdapter.OnCl
 
     @Override
     protected void initView() {
-        StatService.commitEvents(mContext, Constants.PAGE_FILE_LIST);
         ButterKnife.bind(this);
         setToolbar(R.id.toolbar);
         toolbars("浏览图书", R.drawable.return_button1, null);

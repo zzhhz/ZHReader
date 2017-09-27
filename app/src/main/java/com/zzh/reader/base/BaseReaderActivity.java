@@ -2,7 +2,6 @@ package com.zzh.reader.base;
 
 import android.os.Bundle;
 
-import com.tencent.stat.StatConfig;
 import com.zzh.zlibs.base.BaseActivity;
 import com.zzh.zlibs.swipe.SwipeBackLayout;
 
@@ -49,8 +48,6 @@ public abstract class BaseReaderActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         mSwipeBackLayout = getSwipeBackLayout();
         mSwipeBackLayout.setEdgeTrackingEnabled(SwipeBackLayout.EDGE_LEFT);
-        StatConfig.setAutoExceptionCaught(true);
-        StatConfig.initNativeCrashReport(mContext, null);
     }
 
     @Override

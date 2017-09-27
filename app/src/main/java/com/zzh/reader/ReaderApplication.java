@@ -3,6 +3,7 @@ package com.zzh.reader;
 import android.app.Application;
 import android.content.Context;
 
+import com.tencent.bugly.crashreport.CrashReport;
 import com.zzh.reader.util.GreenDaoManager;
 
 /**
@@ -33,9 +34,9 @@ import com.zzh.reader.util.GreenDaoManager;
  * @Author: zzh
  * @Description:
  */
-
 public class ReaderApplication extends Application {
     private static ReaderApplication mInstance;
+
     public ReaderApplication() {
         super();
     }
@@ -45,6 +46,7 @@ public class ReaderApplication extends Application {
         super.onCreate();
         mInstance = this;
         GreenDaoManager.getInstance();
+        CrashReport.initCrashReport(this);
     }
 
     public static Context getInstance() {
