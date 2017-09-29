@@ -46,6 +46,7 @@ public abstract class BaseReaderActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TAG = this.getClass().getName();
         mSwipeBackLayout = getSwipeBackLayout();
         mSwipeBackLayout.setEdgeTrackingEnabled(SwipeBackLayout.EDGE_LEFT);
     }

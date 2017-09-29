@@ -1,5 +1,6 @@
 package com.zzh.reader.ui.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -68,6 +69,15 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(welcomeImageView);
         requestReadStoragePermission();
+        requestPermission(new String[]{
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_WIFI_STATE,
+                        Manifest.permission.ACCESS_NETWORK_STATE,
+                },
+                REQUEST_CODE_READ_PERMISSION);
     }
 
     @Override

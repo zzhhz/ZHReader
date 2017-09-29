@@ -116,6 +116,7 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
 
             @Override
             public void onNoAD(AdError adError) {
+                Log.d(TAG, "onNoAD:---banner view-- "+adError.getErrorMsg()+", "+adError.getErrorCode());
 
             }
 
@@ -170,7 +171,7 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
 
             @Override
             public void onNoAD(AdError adError) {
-
+                Log.d(TAG, "onNoAD: ---iad---"+adError.getErrorMsg()+", "+adError.getErrorCode());
             }
 
             @Override
@@ -199,7 +200,7 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
             }
         });
 //请求插屏广告，每次重新请求都可以调用此方法。
-//        iad.loadAd();
+        iad.loadAD();
     }
 
     @Override

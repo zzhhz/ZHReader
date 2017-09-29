@@ -55,7 +55,7 @@
 
         <service
             android:name="com.qq.e.comm.DownloadService"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity
             android:name="com.qq.e.ads.ADActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
