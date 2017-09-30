@@ -68,7 +68,6 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
         Glide.with(this).load(R.mipmap.ic_splash).crossFade(1000)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(welcomeImageView);
-        requestReadStoragePermission();
         requestPermission(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,

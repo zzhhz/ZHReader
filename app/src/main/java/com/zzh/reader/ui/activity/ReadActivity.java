@@ -96,7 +96,6 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
     private int a = 0, b = 0;// 记录toolpop的位置
     private TextView fontSize, readLight, bookMark, readJump, readSet;
     private static String bookPath, bookName;// 记录读入书的路径及书名
-    private String ccc = null;// 记录是否为快捷方式调用
     protected long count = 1;
     public static SharedPreferences.Editor editor;
     private ImageButton listener_book, imageBtn_light, pop_return;
@@ -233,7 +232,6 @@ public class ReadActivity extends BaseReaderNoSwipeActivity implements
         mBook = (Book) intent.getSerializableExtra(DATA_BOOK);
         bookPath = intent.getStringExtra("bookpath");
         bookName = intent.getStringExtra("bookname");
-        ccc = intent.getStringExtra("ccc");
         begin1 = intent.getIntExtra("bigin", 0);
         if (begin1 == 0) {
             begin = sp.getInt(bookPath + "begin", 0);
