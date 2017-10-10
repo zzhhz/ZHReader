@@ -37,18 +37,14 @@ public class Constants {
 
     public static final String URL_MY_BLOG = "http://zzhhz.blog.51cto.com";
     public static final String URL_MY_GITHUB="https://github.com/zzhhz";
-    public static final String AD_SPLASH_ID = "";//开屏广告
-//    public static final String AD_SPLASH_ID = "7040811988666883";//开屏广告
-//    public static final String AD_APP_ID = "1106000566";
-    public static final String AD_APP_ID = "";
+    public static final String AD_SPLASH_ID = "7040811988666883";//开屏广告
+    public static final String AD_APP_ID = "1106000566";
     public static final int PAGE_SPLASH = 1;
     public static final int PAGE_MAIN = 2;
     public static final int PAGE_FILE_LIST = 3;
 
 
     public static final String TA_APP_KEY = "Aqc1106000566";//统计
-    public static final String AD_BANNER_ID = "";//轮播图广告
-//    public static final String AD_BANNER_ID = "7020329043521629";//轮播图广告
-    public static final String AD_CHA_PING_ID = "";//插屏广告
-//    public static final String AD_CHA_PING_ID = "8080325082409488";//插屏广告
+    public static final String AD_BANNER_ID = "7020329043521629";//轮播图广告
+    public static final String AD_CHA_PING_ID = "8080325082409488";//插屏广告
 }
