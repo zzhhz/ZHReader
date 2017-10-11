@@ -206,7 +206,7 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
     @Override
     protected void onResume() {
         super.onResume();
-        iad.loadAD();
+        //iad.loadAD();
     }
 
     /**
