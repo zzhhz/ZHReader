@@ -22,25 +22,23 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.makeramen:roundedimageview:2.0.1'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.jakewharton:butterknife:8.4.0'
-    compile 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile('com.github.zzhhz:ZzhLibs:0.1.9') {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api 'junit:junit:4.12'
+    api 'com.makeramen:roundedimageview:2.0.1'
+    api 'com.github.bumptech.glide:glide:3.7.0'
+    api 'org.greenrobot:eventbus:3.0.0'
+    api('com.github.zzhhz:ZzhLibs:0.1.9') {
         exclude group: 'com.android.support'
     }
-    compile 'org.greenrobot:greendao:3.2.0'
-    compile 'com.android.support:appcompat-v7:25.0.1'
-    compile 'com.android.support:design:25.0.1'
-    compile 'com.tencent.bugly:crashreport:latest.release'
+    api 'org.greenrobot:greendao:3.2.0'
+    api 'com.android.support:appcompat-v7:25.0.1'
+    api 'com.android.support:design:25.0.1'
+    api 'com.tencent.bugly:crashreport:latest.release'
     //其中lat
     //est.release指代最新版本号，也可以指定明确的版本号，例如2.1.5
-    compile 'com.tencent.bugly:nativecrashreport:latest.release'
+    api 'com.tencent.bugly:nativecrashreport:latest.release'
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
-    compile files('libs/GDTUnionSDK.4.11.552.min.jar')
-    compile files('libs/epublib-core-latest.jar')
-    compile files('libs/slf4j-android-1.6.1-RC1.jar')
+    api files('libs/GDTUnionSDK.4.11.552.min.jar')
+    api files('libs/epublib-core-latest.jar')
+    api files('libs/slf4j-android-1.6.1-RC1.jar')
 }
