@@ -85,7 +85,6 @@ import butterknife.ButterKnife;
  */
 public class ReadActivity extends BaseReaderNoSwipeActivity implements
         SeekBar.OnSeekBarChangeListener, CatalogueFragment.OnClickCatalogListener {
-    public static final String DATA_BOOK = "data_book";
     private LinearLayout layout;
     private static final String TAG = "Read2";
     private static int begin = 0;// 记录的书籍开始位置

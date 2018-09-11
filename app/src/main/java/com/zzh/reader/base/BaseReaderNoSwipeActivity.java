@@ -39,7 +39,7 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 
 public abstract class BaseReaderNoSwipeActivity extends BaseNoSwipeBackActivity {
-
+    public static final String DATA_BOOK = "data_book";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
