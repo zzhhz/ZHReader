@@ -20,6 +20,7 @@ import com.zzh.reader.base.BaseReaderActivity;
 import com.zzh.reader.dao.BookDao;
 import com.zzh.reader.model.Book;
 import com.zzh.reader.model.FileComparator;
+import com.zzh.reader.ui.activity.ReadEpubActivity;
 import com.zzh.reader.util.EventUtils;
 import com.zzh.reader.util.GreenDaoManager;
 import com.zzh.zlibs.utils.ZUtils;
@@ -175,7 +176,12 @@ public class FileActivity extends BaseReaderActivity implements FileAdapter.OnCl
             } else {
                 entity = books.get(0);
             }
-            Intent intent = new Intent(this, ReadActivity.class);
+            Intent intent = new Intent();
+            if (file.getAbsolutePath().endsWith(".epub")){
+                intent.setClass(mContext, ReadEpubActivity.class);
+            } else {
+                intent.setClass(mContext, ReadActivity.class);
+            }
             intent.putExtra("bookname",file.getName());
             intent.putExtra("bookpath", file.getAbsolutePath());
             intent.putExtra(ReadActivity.DATA_BOOK, entity);
@@ -217,7 +223,7 @@ public class FileActivity extends BaseReaderActivity implements FileAdapter.OnCl
                     if (pathname.isDirectory() && !name.startsWith(".")){
                         return true;
                     } else {
-                        if ((name.endsWith(".text") || name.endsWith(".txt")) && !name.startsWith(".")){
+                        if ((name.endsWith(".text") || name.endsWith(".txt") || name.endsWith(".epub")) && !name.startsWith(".")){
                             return true;
                         }
                     }
