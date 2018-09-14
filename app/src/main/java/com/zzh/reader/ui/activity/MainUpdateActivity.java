@@ -255,7 +255,7 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
         mBookGrid.addItemDecoration(itemDecoration);
         itemTouchHelper = new ItemTouchHelper(new DragItemTouchCallback(mAdapter).setOnDragListener(this));
         itemTouchHelper.attachToRecyclerView(mBookGrid);
-        BookDao bookDao = GreenDaoManager.getInstance().getBookDao();
+        BookDao bookDao = GreenDaoManager.getBookDao();
         List<Book> list = bookDao.queryBuilder().list();
         if (list != null) {
             mAdapter.addAllBook(list);
@@ -400,11 +400,17 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
         mOpenBookView = bookView;
         resetDragGridView();
         isOpen = true;
-        Intent intent = new Intent(mContext, ReadActivity.class);
-        intent.putExtra("bookname", book.getBookName());
-        intent.putExtra("bookpath", book.getBookPath());
-        intent.putExtra(ReadActivity.DATA_BOOK, book);
-        startActivity(intent);
+        if (book.getBookPath().endsWith(".epub") || book.getBookPath().endsWith(".EPUB")){
+            Intent intent = new Intent(mContext, ReadEpubActivity.class);
+            intent.putExtra(ReadActivity.DATA_BOOK, book);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(mContext, ReadActivity.class);
+            intent.putExtra("bookname", book.getBookName());
+            intent.putExtra("bookpath", book.getBookPath());
+            intent.putExtra(ReadActivity.DATA_BOOK, book);
+            startActivity(intent);
+        }
     }
 
     @Override

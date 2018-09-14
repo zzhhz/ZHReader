@@ -2,6 +2,7 @@ package com.zzh.reader.ui.activity;
 
 import android.content.Intent;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 
 import com.zzh.reader.R;
@@ -20,9 +21,12 @@ import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Date;
 import nl.siegmann.epublib.domain.Identifier;
+import nl.siegmann.epublib.domain.MediaType;
 import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.domain.Relator;
+import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.epub.EpubReader;
+import nl.siegmann.epublib.service.MediatypeService;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
@@ -50,78 +54,19 @@ public class ReadEpubActivity extends BaseReaderNoSwipeActivity {
     @Override
     protected void initData() {
         Intent intent = getIntent();
-        String bookpath = intent.getStringExtra("bookpath");
-
+        com.zzh.reader.model.Book data = (com.zzh.reader.model.Book) intent.getSerializableExtra(ReadActivity.DATA_BOOK);
         EpubReader reader = new EpubReader();
         try {
-            Book book = reader.readEpub(new FileInputStream(bookpath));
-            String title = book.getTitle();
-            out.println(title);
-
-            Metadata metadata = book.getMetadata();
-            List<Author> authors = metadata.getAuthors();
-            showAuthorDetails(authors);
-            out.println("------------------------------分割线----------------------------------------");
-            List<Author> contributors = metadata.getContributors();
-            showAuthorDetails(authors);
-            out.println("------------------------------分割线----------------------------------------");
-            List<Date> dates = metadata.getDates();
-            if (dates != null) {
-                for (Date date : dates) {
-                    out.println("--event-" + date.getEvent() + "---value--" + date.getValue());
+            Book book = reader.readEpub(new FileInputStream(data.getBookPath()));
+            List<Resource> list = book.getContents();
+            if (list != null && !list.isEmpty()) {
+                for (Resource resource : list) {
+                    Log.d("---文件读取----", resource.toString());
+                    Log.d("","----------------------------------------------------------------------------------------------------");
                 }
             } else {
-                out.println("-------list<Data> 为空--------------------------------");
+                Log.d(TAG, "------initData: 没有获取到目录信息");
             }
-            List<String> descriptions = metadata.getDescriptions();
-            showString(descriptions);
-            out.println("------------------------------分割线----------------------------------------");
-            String firstTitle = metadata.getFirstTitle();
-            out.println("-----first title----" + firstTitle);
-            String format = metadata.getFormat();
-            out.println("-----format----" + format);
-            List<Identifier> identifiers = metadata.getIdentifiers();
-            if (identifiers != null) {
-                for (Identifier ids :
-                        identifiers) {
-                    out.println("-----scheme--" + ids.getScheme() + "--value-" + ids.getValue());
-                }
-            } else {
-                out.println("-------List<Identifier> 为空--------------------------------");
-            }
-            out.println("------------------------------分割线----------------------------------------");
-            String language = metadata.getLanguage();
-            out.println("-----language---" + language);
-            Map<QName, String> otherProperties = metadata.getOtherProperties();
-            if (otherProperties != null){
-                Set<QName> qNames = otherProperties.keySet();
-                if (qNames != null){
-                    for (QName name : qNames) {
-                        out.println("------name-"+name+"------value--"+otherProperties.get(name));
-                    }
-                } else {
-                    out.println("---------------qName为空--------------------------");
-                }
-            } else {
-                out.println("-------otherProperties 为空--------------------------------");
-            }
-
-
-            List<String> publishers = metadata.getPublishers();
-            showString(publishers);
-            out.println("------------------------------分割线----------------------------------------");
-            List<String> rights = metadata.getRights();
-            showString(rights);
-            out.println("------------------------------分割线----------------------------------------");
-            List<String> subjects = metadata.getSubjects();
-            showString(subjects);
-            out.println("------------------------------分割线----------------------------------------");
-            List<String> titles = metadata.getTitles();
-            showString(titles);
-            out.println("------------------------------分割线----------------------------------------");
-            List<String> types = metadata.getTypes();
-            showString(types);
-            out.println("------------------------------分割线----------------------------------------");
 
 
         } catch (IOException e) {
