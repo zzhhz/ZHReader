@@ -11,24 +11,16 @@ import com.zzh.reader.base.BaseReaderNoSwipeActivity;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import butterknife.ButterKnife;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
-import nl.siegmann.epublib.domain.Date;
-import nl.siegmann.epublib.domain.Identifier;
-import nl.siegmann.epublib.domain.MediaType;
-import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.domain.Relator;
 import nl.siegmann.epublib.domain.Resource;
+import nl.siegmann.epublib.domain.TOCReference;
+import nl.siegmann.epublib.domain.TableOfContents;
 import nl.siegmann.epublib.epub.EpubReader;
-import nl.siegmann.epublib.service.MediatypeService;
 
-import static java.lang.System.in;
 import static java.lang.System.out;
 
 /**
@@ -59,13 +51,31 @@ public class ReadEpubActivity extends BaseReaderNoSwipeActivity {
         try {
             Book book = reader.readEpub(new FileInputStream(data.getBookPath()));
             List<Resource> list = book.getContents();
+
             if (list != null && !list.isEmpty()) {
                 for (Resource resource : list) {
                     Log.d("---文件读取----", resource.toString());
-                    Log.d("","----------------------------------------------------------------------------------------------------");
+                    Log.d("", "----------------------------------------------------------------------------------------------------");
                 }
             } else {
                 Log.d(TAG, "------initData: 没有获取到目录信息");
+            }
+            TableOfContents tableOfContents = book.getTableOfContents();
+            if (tableOfContents != null) {
+
+                List<TOCReference> toc = tableOfContents.getTocReferences();
+                if (toc != null) {
+                    for (TOCReference ref : toc) {
+                        Log.d(TAG, "-----一级目录----: " + ref.getTitle());
+                    }
+
+
+                } else {
+                    Log.d(TAG, "initData: toc 为空");
+                }
+
+            } else {
+                Log.d(TAG, "initData: tableOfContents 为空");
             }
 
 

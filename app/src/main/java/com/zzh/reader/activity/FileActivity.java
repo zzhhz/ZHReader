@@ -223,7 +223,7 @@ public class FileActivity extends BaseReaderActivity implements FileAdapter.OnCl
                     if (pathname.isDirectory() && !name.startsWith(".")){
                         return true;
                     } else {
-                        if ((name.endsWith(".text") || name.endsWith(".txt") || name.endsWith(".epub")) && !name.startsWith(".")){
+                        if ((name.endsWith(".text") || name.endsWith(".txt") || name.endsWith(".epub")) && !name.startsWith(".EPUB")){
                             return true;
                         }
                     }

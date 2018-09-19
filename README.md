@@ -4,6 +4,35 @@
 
 
 
+
+# epublib-core-latest.jar slf4j-android-1.6.1-RC.jar
+
+### 获取目录
+
+    以明朝那些事为例
+
+    -----一级目录----: 封面
+    -----一级目录----: 简介
+    -----一级目录----: 前言
+    -----一级目录----: 壹 洪武大帝
+    -----一级目录----: 贰 万国来朝
+    -----一级目录----: 叁 妖孽宫廷
+    -----一级目录----: 肆 粉饰太平
+    -----一级目录----: 伍 帝国飘摇
+    -----一级目录----: 陆 日暮西山
+    -----一级目录----: 柒 大结局
+    -----一级目录----: 后记
+
+    获取epub电子书中的目录
+    TableOfContents tableOfContents = nl.siegmann.epublib.domain.Book.getTableOfContents();
+
+    一级目录:List<TOCReference> toc = tableOfContents.getTocReferences();
+
+        子目录：TOCReference.getChildren()
+
+
+
+
 String title = book.getTitle();
             out.println(title);
 
