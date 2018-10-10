@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 24
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -31,8 +31,8 @@ dependencies {
         exclude group: 'com.android.support'
     }
     api 'org.greenrobot:greendao:3.2.0'
-    api 'com.android.support:appcompat-v7:25.0.1'
-    api 'com.android.support:design:25.0.1'
+    api 'com.android.support:appcompat-v7:27.1.1'
+    api 'com.android.support:design:27.1.1'
     api 'com.tencent.bugly:crashreport:latest.release'
     //其中lat
     //est.release指代最新版本号，也可以指定明确的版本号，例如2.1.5

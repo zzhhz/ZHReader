@@ -45,18 +45,29 @@ public class Catalogue implements Serializable{
     private String catalogue;//目录名称
     @Property(nameInDb = "bookPath")
     private String bookPath; //路径
+    @Property(nameInDb = "resId")
+    private String resId;
 
     @Generated(hash = 6269787)
     public Catalogue(Long catalogueId, int position, String catalogue,
-            String bookPath) {
+            String bookPath, String resId) {
         this.catalogueId = catalogueId;
         this.position = position;
         this.catalogue = catalogue;
         this.bookPath = bookPath;
+        this.resId = resId;
     }
 
     @Generated(hash = 1495294006)
     public Catalogue() {
+    }
+
+    public String getResId() {
+        return resId;
+    }
+
+    public void setResId(String resId) {
+        this.resId = resId;
     }
 
     public Long getCatalogueId() {

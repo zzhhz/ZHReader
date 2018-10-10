@@ -53,6 +53,14 @@ public class EventUtils {
         intent.setAction(Constants.ACTION_REFRESH_BOOK_LIST);
         EventBus.getDefault().post(intent);
     }
+    /**
+     * 通知刷新图书列表
+     */
+    public static void sendEventRefreshBookCatalogue(){
+        Intent intent = new Intent();
+        intent.setAction(Constants.ACTION_REFRESH_BOOK_CATALOGUE);
+        EventBus.getDefault().post(intent);
+    }
 
     public static void sendEventDeleteShowBook() {
         Intent intent = new Intent();
