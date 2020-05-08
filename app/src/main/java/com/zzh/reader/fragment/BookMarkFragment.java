@@ -3,7 +3,6 @@ package com.zzh.reader.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v7.appcompat.R.anim;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,23 +24,6 @@ import java.util.List;
 /**
  *
  *----------Dragon be here!----------/
- * 　　　┏┓　　　┏┓
- * 　　┏┛┻━━━┛┻┓
- * 　　┃　　　　　　　┃
- * 　　┃　　　━　　　┃
- * 　　┃　┳┛　┗┳　┃
- * 　　┃　　　　　　　┃
- * 　　┃　　　┻　　　┃
- * 　　┃　　　　　　　┃
- * 　　┗━┓　　　┏━┛
- * 　　　　┃　　　┃神兽保佑
- * 　　　　┃　　　┃代码无BUG！
- * 　　　　┃　　　┗━━━┓
- * 　　　　┃　　　　　　　┣┓
- * 　　　　┃　　　　　　　┏┛
- * 　　　　┗┓┓┏━┳┓┏┛
- * 　　　　　┃┫┫　┃┫┫
- * 　　　　　┗┻┛　┗┻┛
  * ━━━━━━神兽出没━永无BUG━━━━━
  * @Date: 2017/2/20 10:03
  * @Email: zzh_hz@126.com
@@ -107,7 +89,7 @@ public class BookMarkFragment extends BaseReaderFragment implements View.OnClick
             intent.putExtra("bookpath", bookpath);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-            getActivity().overridePendingTransition(anim.abc_grow_fade_in_from_bottom, anim.abc_shrink_fade_out_from_bottom);
+            getActivity().overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, R.anim.abc_shrink_fade_out_from_bottom);
         }
     }
 

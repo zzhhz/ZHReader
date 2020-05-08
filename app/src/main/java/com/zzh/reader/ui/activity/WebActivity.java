@@ -3,7 +3,6 @@ package com.zzh.reader.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -13,6 +12,7 @@ import android.webkit.WebViewClient;
 import com.zzh.reader.R;
 import com.zzh.reader.base.BaseReaderActivity;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 /**

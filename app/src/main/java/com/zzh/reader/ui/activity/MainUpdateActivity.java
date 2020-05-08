@@ -3,12 +3,6 @@ package com.zzh.reader.ui.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Message;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,11 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.qq.e.ads.banner.ADSize;
-import com.qq.e.ads.banner.BannerADListener;
-import com.qq.e.ads.banner.BannerView;
-import com.qq.e.ads.interstitial.InterstitialAD;
-import com.qq.e.ads.interstitial.InterstitialADListener;
+import com.google.android.material.navigation.NavigationView;
+import com.qq.e.ads.banner2.UnifiedBannerADListener;
+import com.qq.e.ads.banner2.UnifiedBannerView;
+import com.qq.e.ads.interstitial2.UnifiedInterstitialAD;
+import com.qq.e.ads.interstitial2.UnifiedInterstitialADListener;
 import com.qq.e.comm.util.AdError;
 import com.zzh.reader.Constants;
 import com.zzh.reader.R;
@@ -43,6 +37,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -89,8 +88,8 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
     private ItemTouchHelper itemTouchHelper;
     private boolean isExit = false;
     private ViewGroup mHeaderView;
-    BannerView mBannerView ;
-     InterstitialAD iad;
+    UnifiedBannerView mBannerView ;
+    UnifiedInterstitialAD iad;
     @Override
     protected int setLayoutId() {
         return R.layout.activity_main_update;
@@ -110,21 +109,17 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
         });
 
         mHeaderView = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.item_header_view_ad_grid_book, null);
-        mBannerView = new BannerView(this, ADSize.BANNER, Constants.AD_APP_ID, Constants.AD_BANNER_ID);
-        mBannerView.setRefresh(100);
-        mBannerView.setADListener(new BannerADListener() {
-
+        mBannerView = new UnifiedBannerView(this, Constants.AD_APP_ID, Constants.AD_BANNER_ID, new UnifiedBannerADListener() {
             @Override
             public void onNoAD(AdError adError) {
-                Log.d(TAG, "onNoAD:---banner view-- "+adError.getErrorMsg()+", "+adError.getErrorCode());
 
             }
 
             @Override
-            public void onADReceiv() {
-                Log.d(TAG, "onADReceiv: ");
+            public void onADReceive() {
                 mAdapter.notifyDataSetChanged();
             }
+
 
             @Override
             public void onADExposure() {
@@ -157,16 +152,20 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
                 Log.d(TAG, "onADCloseOverlay: ");
             }
         });
-        mBannerView.setShowClose(true);
+        mBannerView.setRefresh(100);
+
         mBannerView.loadAD();
         mHeaderView.addView(mBannerView);
         initNavigationView();
-        iad = new InterstitialAD(this, Constants.AD_APP_ID, Constants.AD_CHA_PING_ID);
-        //iad.setAdListener();
-        iad.setADListener(new InterstitialADListener() {
+        iad = new UnifiedInterstitialAD(this, Constants.AD_APP_ID, Constants.AD_CHA_PING_ID, new UnifiedInterstitialADListener() {
             @Override
             public void onADReceive() {
-                iad.showAsPopupWindow((Activity) mContext);
+                iad.showAsPopupWindow();
+            }
+
+            @Override
+            public void onVideoCached() {
+
             }
 
             @Override
@@ -199,14 +198,14 @@ public class MainUpdateActivity extends BaseReaderNoSwipeActivity implements Dra
 
             }
         });
+        //iad.setAdListener();
 //请求插屏广告，每次重新请求都可以调用此方法。
         iad.loadAD();
     }
-
     @Override
     protected void onResume() {
         super.onResume();
-        //iad.loadAD();
+        iad.loadAD();
     }
 
     /**

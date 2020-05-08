@@ -1,10 +1,10 @@
 package com.zzh.reader.model;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Property;
 
 import java.io.Serializable;
-import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * ----------Dragon be here!----------/
@@ -47,8 +47,7 @@ public class Catalogue implements Serializable{
     private String bookPath; //路径
     @Property(nameInDb = "resId")
     private String resId;
-
-    @Generated(hash = 6269787)
+    @Generated(hash = 402962877)
     public Catalogue(Long catalogueId, int position, String catalogue,
             String bookPath, String resId) {
         this.catalogueId = catalogueId;
@@ -57,11 +56,9 @@ public class Catalogue implements Serializable{
         this.bookPath = bookPath;
         this.resId = resId;
     }
-
     @Generated(hash = 1495294006)
     public Catalogue() {
     }
-
     public String getResId() {
         return resId;
     }

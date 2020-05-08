@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="50dp"
-    tools:context="com.zzh.test.Test1Activity">
+    android:paddingTop="50dp">
 
     <Button
         android:text="Button"

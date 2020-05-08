@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.zzh.zlibs.base.BaseNoSwipeBackActivity;
+import com.zzh.zlibs.base.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -12,23 +12,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * ----------Dragon be here!----------/
- * 　　　┏┓　　　┏┓
- * 　　┏┛┻━━━┛┻┓
- * 　　┃　　　　　　　┃
- * 　　┃　　　━　　　┃
- * 　　┃　┳┛　┗┳　┃
- * 　　┃　　　　　　　┃
- * 　　┃　　　┻　　　┃
- * 　　┃　　　　　　　┃
- * 　　┗━┓　　　┏━┛
- * 　　　　┃　　　┃神兽保佑
- * 　　　　┃　　　┃代码无BUG！
- * 　　　　┃　　　┗━━━┓
- * 　　　　┃　　　　　　　┣┓
- * 　　　　┃　　　　　　　┏┛
- * 　　　　┗┓┓┏━┳┓┏┛
- * 　　　　　┃┫┫　┃┫┫
- * 　　　　　┗┻┛　┗┻┛
  * ━━━━━━神兽出没━永无BUG━━━━━
  * Created by ZZH on 17/1/24.
  *
@@ -39,7 +22,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * @Description: 没有向右滑动
  */
 
-public abstract class BaseReaderNoSwipeActivity extends BaseNoSwipeBackActivity {
+public abstract class BaseReaderNoSwipeActivity extends BaseActivity {
     public static final String DATA_BOOK = "data_book";
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -28,6 +28,7 @@ public class CatalogueDao extends AbstractDao<Catalogue, Void> {
         public final static Property Position = new Property(1, int.class, "position", false, "position");
         public final static Property Catalogue = new Property(2, String.class, "catalogue", false, "catalogue");
         public final static Property BookPath = new Property(3, String.class, "bookPath", false, "bookPath");
+        public final static Property ResId = new Property(4, String.class, "resId", false, "resId");
     }
 
 
@@ -46,7 +47,8 @@ public class CatalogueDao extends AbstractDao<Catalogue, Void> {
                 "\"catalogueId\" INTEGER," + // 0: catalogueId
                 "\"position\" INTEGER NOT NULL ," + // 1: position
                 "\"catalogue\" TEXT," + // 2: catalogue
-                "\"bookPath\" TEXT);"); // 3: bookPath
+                "\"bookPath\" TEXT," + // 3: bookPath
+                "\"resId\" TEXT);"); // 4: resId
     }
 
     /** Drops the underlying database table. */
@@ -74,6 +76,11 @@ public class CatalogueDao extends AbstractDao<Catalogue, Void> {
         if (bookPath != null) {
             stmt.bindString(4, bookPath);
         }
+ 
+        String resId = entity.getResId();
+        if (resId != null) {
+            stmt.bindString(5, resId);
+        }
     }
 
     @Override
@@ -95,6 +102,11 @@ public class CatalogueDao extends AbstractDao<Catalogue, Void> {
         if (bookPath != null) {
             stmt.bindString(4, bookPath);
         }
+ 
+        String resId = entity.getResId();
+        if (resId != null) {
+            stmt.bindString(5, resId);
+        }
     }
 
     @Override
@@ -108,7 +120,8 @@ public class CatalogueDao extends AbstractDao<Catalogue, Void> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // catalogueId
             cursor.getInt(offset + 1), // position
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // catalogue
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // bookPath
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // bookPath
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // resId
         );
         return entity;
     }
@@ -119,6 +132,7 @@ public class CatalogueDao extends AbstractDao<Catalogue, Void> {
         entity.setPosition(cursor.getInt(offset + 1));
         entity.setCatalogue(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setBookPath(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setResId(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
     @Override

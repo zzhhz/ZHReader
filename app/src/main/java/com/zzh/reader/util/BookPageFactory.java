@@ -164,7 +164,7 @@ public class BookPageFactory {
         float height = CommonUtil.convertDpToPixel(mcontext, 10);
         rect1.set(rect1Left, mHeight - height - 10, rect1Left + width, mHeight - 10);
         rect2.set(rect1Left + mBorderWidth, mHeight - height + mBorderWidth - 10, rect1Left + width - mBorderWidth, mHeight - mBorderWidth - 10);
-        c.save(Canvas.CLIP_SAVE_FLAG);
+        c.save();
         c.clipRect(rect2, Region.Op.DIFFERENCE);
         c.drawRect(rect1, mBatterryPaint);
         c.restore();
@@ -456,7 +456,7 @@ public class BookPageFactory {
                 }
                 bookCatalogue.add(strParagraph);   //保存到数组
                 bookCatalogueStartPos.add(m_mstartpos);
-                Catalogue catalogue = new Catalogue(null, m_mstartpos, strParagraph, bookPath);
+                Catalogue catalogue = new Catalogue(null, m_mstartpos, strParagraph, bookPath,"");
                 catalogueDao.insert(catalogue);
                 Log.d(TAG, "getBookInfo:------ " + catalogue);
             }

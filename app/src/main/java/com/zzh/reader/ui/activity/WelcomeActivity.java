@@ -65,7 +65,7 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
     protected void initView() {
         ButterKnife.bind(this);
         welcomeImageView = (ImageView) findViewById(R.id.wecome_img);
-        Glide.with(this).load(R.mipmap.ic_splash).crossFade(1000)
+        Glide.with(this).load(R.mipmap.ic_splash)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(welcomeImageView);
         requestPermission(new String[]{
@@ -81,7 +81,8 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
 
     @Override
     protected void initData() {
-        mSplashAD = new SplashAD(this, mADLayout, Constants.AD_APP_ID, Constants.AD_SPLASH_ID, this);
+        mSplashAD = new SplashAD(this, null, Constants.AD_APP_ID, Constants.AD_SPLASH_ID, this, 3000);
+        mSplashAD.showAd(mADLayout);
     }
 
     @Override
@@ -138,7 +139,7 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
 
     @Override
     public void onADDismissed() {
-
+        Log.d(TAG, "onADDismissed: ");
     }
 
     @Override
@@ -149,17 +150,27 @@ public class WelcomeActivity extends BaseReaderActivity implements SplashADListe
 
     @Override
     public void onADPresent() {
-
+        Log.d(TAG, "onADPresent: ");
     }
 
     @Override
     public void onADClicked() {
-
+        Log.d(TAG, "onADClicked: ");
     }
 
     @Override
     public void onADTick(long l) {
+        Log.d(TAG, "onADTick: ");
+    }
 
+    @Override
+    public void onADExposure() {
+        Log.d(TAG, "onADExposure: ");
+    }
+
+    @Override
+    public void onADLoaded(long l) {
+        Log.d(TAG, "onADLoaded: " + l);
     }
 
     @Override

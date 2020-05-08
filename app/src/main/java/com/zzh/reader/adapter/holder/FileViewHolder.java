@@ -1,6 +1,5 @@
 package com.zzh.reader.adapter.holder;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -8,29 +7,12 @@ import android.widget.TextView;
 
 import com.zzh.reader.R;
 
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * ----------Dragon be here!----------/
- * 　　　┏┓　　　┏┓
- * 　　┏┛┻━━━┛┻┓
- * 　　┃　　　　　　　┃
- * 　　┃　　　━　　　┃
- * 　　┃　┳┛　┗┳　┃
- * 　　┃　　　　　　　┃
- * 　　┃　　　┻　　　┃
- * 　　┃　　　　　　　┃
- * 　　┗━┓　　　┏━┛
- * 　　　　┃　　　┃神兽保佑
- * 　　　　┃　　　┃代码无BUG！
- * 　　　　┃　　　┗━━━┓
- * 　　　　┃　　　　　　　┣┓
- * 　　　　┃　　　　　　　┏┛
- * 　　　　┗┓┓┏━┳┓┏┛
- * 　　　　　┃┫┫　┃┫┫
- * 　　　　　┗┻┛　┗┻┛
- * ━━━━━━神兽出没━永无BUG━━━━━
  * Created by ZZH on 17/2/12.
  *
  * @Date: 17/2/12
@@ -54,9 +36,5 @@ public class FileViewHolder extends RecyclerView.ViewHolder{
     public FileViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
-        /*fileIcon = (ImageView) itemView.findViewById(R.id.local_file_icon);
-        fileName = (TextView) itemView.findViewById(R.id.local_file_text);
-        fileSize = (TextView) itemView.findViewById(R.id.local_file_text_size);
-        isCheck = (CheckBox) itemView.findViewById(R.id.local_file_image);*/
     }
 }

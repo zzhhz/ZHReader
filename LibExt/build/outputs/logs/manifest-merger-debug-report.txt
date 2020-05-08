@@ -1,0 +1,49 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:1-12:12
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:1-12:12
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:1-12:12
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:1-12:12
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:1-12:12
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:1-12:12
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:1-12:12
+	package
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:2:11-35
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:1-12:12
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:1-12:12
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.READ_PHONE_STATE
+ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:4:5-74
+	android:name
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:4:22-72
+application
+ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:5:5-10:19
+	android:supportsRtl
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:8:9-35
+	android:label
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:7:9-41
+	android:allowBackup
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml:6:9-35
+uses-sdk
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+		ADDED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
+		INJECTED from /Users/ZZH/WorkPlaces/AS_GITHUB/ZHReader/LibExt/src/main/AndroidManifest.xml
